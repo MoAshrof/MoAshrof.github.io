@@ -1237,6 +1237,8 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
     let stepP = reduce ? dp : Math.sign(dp) * Math.min(Math.abs(dp) * Math.min(1, dt * 2.2), cap * dt / ROUTE);
     if (Math.abs(dp) * ROUTE < 0.03) stepP = dp; // close enough: settle exactly on the stop
     current += stepP;
+    // a Back/Next move is finished once he reaches it: forget it, so a later scroll jump can hurry again
+    if (pending !== null && Math.abs(target - pending) < 0.004 && Math.abs(current - target) * ROUTE < 0.5) pending = null;
     const speed = dt > 0 ? Math.abs(stepP) * ROUTE / dt : 0;
     const t = tOf(current);
     const f = frameAt(t);

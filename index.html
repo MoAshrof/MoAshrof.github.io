@@ -69,11 +69,12 @@ a { color: inherit; }
 .hero h1 em { font-style: normal; text-decoration: underline 0.16em var(--yellow); text-underline-offset: 0.12em; text-decoration-skip-ink: none; }
 .hero .lede { font-size: 17px; max-width: 58ch; margin: 0 0 22px; color: var(--ink); }
 .hero .role { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); margin: 0 0 24px; }
-.doors { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .door { display: block; text-decoration: none; border-radius: 12px; padding: 14px 16px; font-weight: 600; }
 .door small { display: block; font-weight: 400; font-size: 13px; margin-top: 2px; opacity: 0.75; }
 .door.read { background: var(--paper); border: 1px solid var(--rule); }
 .door.walk { background: var(--steel); color: var(--steel-ink); }
+.door.three { background: var(--yellow); color: var(--yellow-ink); }
 
 /* Conveyor + slips */
 .journey, .block { scroll-margin-top: 60px; }
@@ -178,6 +179,7 @@ footer { padding-block: 40px; text-align: center; font-family: var(--mono); font
     <p class="role">MOHAMED ASHRAF AHMED EL BOGHDADY · GROUP HEAD OF PLANNING &amp; PROCUREMENT · YES PAC GROUP</p>
     <div class="doors">
       <a class="door walk" href="#journey">Walk the journey<small>9 stops · about 2 minutes</small></a>
+      <a class="door three" href="https://moashrof.github.io/journey.html">Walk it in 3D<small>your own character · 9 stations</small></a>
       <a class="door read" href="cv.pdf" target="_blank" rel="noopener">Read the CV<small>2-page PDF</small></a>
     </div>
   </section>
@@ -304,7 +306,7 @@ footer { padding-block: 40px; text-align: center; font-family: var(--mono); font
 
   <div class="delivered" id="contact">
     <h2>Delivered.</h2>
-    <p>Open to senior supply chain, planning and procurement roles.</p>
+    <p>Open to senior roles across supply chain, and to business development roles.</p>
     <div class="contact">
       <div class="row"><span id="email">mohamed.elboghdaddy@gmail.com</span><button class="btn solid" type="button" id="copy-email">Copy email</button><span class="sr" role="status" id="copy-status"></span></div>
       <div class="row"><a class="btn" href="https://www.linkedin.com/in/mohamed-ashraf-124119a1" target="_blank" rel="noopener">LinkedIn profile</a><a class="btn" href="cv.pdf" target="_blank" rel="noopener">Open CV (PDF)</a></div>
