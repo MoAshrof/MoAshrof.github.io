@@ -41,6 +41,7 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
 .stepper { position: fixed; z-index: 4; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 70px); display: flex; gap: 6px; }
 .stepper button { font: 600 13px/1 var(--body); color: var(--ink); background: rgba(251,250,248,0.94); border: 1px solid var(--rule); border-radius: 999px; padding: 11px 14px; cursor: pointer; box-shadow: 0 4px 14px rgba(40,40,40,0.1); }
 .stepper button.next { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.stepper button.auto { min-width: 92px; }
 .stepper button:disabled { opacity: 0.4; cursor: default; }
 .stepper button:focus-visible, .links a:focus-visible, .card a:focus-visible, .card button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
@@ -89,6 +90,7 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
 <div class="stops" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <nav class="stepper" aria-label="Walk the journey">
   <button type="button" id="prev">← Back</button>
+  <button type="button" id="auto" class="auto">▶&#xFE0E; Auto</button>
   <button type="button" id="next" class="next">Next →</button>
 </nav>
 
@@ -98,7 +100,7 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
     <div class="meta"><span class="stamp">START</span><span>2015 → today</span></div>
     <h1>I started where an order ends, on the line, and walked upstream.</h1>
     <p>Nine stops, from an assembly line in Cairo to planning and procurement for a group in Egypt and Ghana.</p>
-    <p class="cue">Scroll, swipe, or press Next.</p>
+    <p class="cue">He walks on by himself. Press Pause, Next or Back, or scroll, to take over.</p>
   </section>
 
   <section class="card out" data-card="0">
@@ -1152,17 +1154,45 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
     if (!list.length) return;
     goTo(dir > 0 ? list[0] : list[list.length - 1]);
   }
-  // the user taking over the scroll cancels any queued destination
-  ['wheel', 'touchstart', 'pointerdown'].forEach(ev => window.addEventListener(ev, e => { if (!(e.target.closest && e.target.closest('.stepper'))) pending = null; }, { passive: true }));
-  window.addEventListener('keydown', e => { if (e.target.closest && e.target.closest('.stepper')) return; if (['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', ' '].includes(e.key)) pending = null; });
-  const prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next');
-  prevBtn.addEventListener('click', () => step(-1));
-  nextBtn.addEventListener('click', () => step(1));
+  // Auto play (on by default): he walks stop to stop by himself and waits at each one long enough to read.
+  // Back/Next, scrolling or scroll keys hand control to the visitor; pressing Auto again carries on.
+  const prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next'), autoBtn = document.getElementById('auto');
+  let auto = false, autoWait = 0, autoGoal = null; // autoGoal: where auto play is standing or heading
+  const AUTO_START = 3, AUTO_DWELL = 9; // seconds at the start, and at each stop once he has arrived
+  function setAuto(on) {
+    auto = on; autoWait = 0; autoGoal = null;
+    autoBtn.textContent = on ? '❚❚ Pause' : '▶︎ Auto'; // FE0E: plain triangle, not a phone emoji
+    autoBtn.setAttribute('aria-label', on ? 'Pause auto play' : 'Auto play the journey');
+    if (!on) return;
+    if (target > END_P - 0.004) { // at the end: start again from the beginning
+      forced = null; pending = null; window.scrollTo({ top: 0, behavior: 'auto' }); target = current = 0;
+    }
+    // standing at a stop: carry on after a short pause; between stops: head to the next one now
+    // (a Back/Next scroll still landing counts as standing at its stop: pending is always a stop)
+    autoWait = target < 0.004 ? 0 : (pending !== null || points.some(p => Math.abs(target - p) < 0.004)) ? AUTO_DWELL - 3 : 99;
+    autoGoal = pending !== null ? pending : target; // mid Back/Next scroll: aim where that scroll lands
+  }
+  function userTookOver() { pending = null; if (auto) setAuto(false); }
+  // a hidden tab pauses scrolling and frames: on return, give a travelling scroll a fresh allowance
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && pending !== null) pendingAt = performance.now(); });
+  // the visitor scrolling (anywhere but the buttons, the story card and the top links) takes over
+  ['wheel', 'touchstart', 'pointerdown'].forEach(ev => window.addEventListener(ev, e => {
+    if (e.target.closest && e.target.closest('.stepper, .card, .top')) return;
+    userTookOver();
+  }, { passive: true }));
+  window.addEventListener('keydown', e => {
+    if (!['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', ' '].includes(e.key)) return;
+    if (e.key === ' ' && e.target.closest && e.target.closest('button, a')) return; // space presses the focused button
+    userTookOver();
+  });
+  prevBtn.addEventListener('click', () => { setAuto(false); step(-1); });
+  nextBtn.addEventListener('click', () => { setAuto(false); step(1); });
+  autoBtn.addEventListener('click', () => setAuto(!auto));
   window.addEventListener('keydown', e => {
     if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
     if (e.target.closest && e.target.closest('input, textarea, select')) return;
-    if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); setAuto(false); step(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); setAuto(false); step(-1); }
   });
 
   // Cards and stop bar
@@ -1196,6 +1226,9 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
     const w = window.innerWidth, h = window.innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
+    // the page height follows the window, so a resize (phone rotation, address bar) moves the progress under
+    // the same scrollY: during auto play, put the scroll back on the stop it is at or heading to
+    if (auto && autoGoal !== null) window.scrollTo(0, autoGoal * maxScroll());
     readScroll();
   }
   window.addEventListener('resize', resize);
@@ -1239,6 +1272,20 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
     current += stepP;
     // a Back/Next move is finished once he reaches it: forget it, so a later scroll jump can hurry again
     if (pending !== null && Math.abs(target - pending) < 0.004 && Math.abs(current - target) * ROUTE < 0.5) pending = null;
+    // a Back/Next scroll that never landed (scrollbar dragged, window resized mid-move): the visitor moved; let go of it
+    // (not during auto play: its own check below has a longer allowance for a slow smooth scroll)
+    if (!auto && pending !== null && performance.now() - pendingAt > 1500 && Math.abs(target - pending) > 0.004) userTookOver();
+    // Auto play: once he stands at a point, wait, then walk on. Any page movement auto play did not make
+    // (scrollbar drag included, which sends no wheel or touch event) hands control to the visitor.
+    if (auto) {
+      const ownScroll = pending !== null && performance.now() - pendingAt < 3000; // its smooth scroll still travelling
+      if (autoGoal !== null && !ownScroll && Math.abs(target - autoGoal) > 0.004) setAuto(false);
+      else if (pending === null && Math.abs(target - current) * ROUTE < 0.05) {
+        autoWait += dt;
+        if (target > END_P - 0.004) setAuto(false); // delivered: the journey is over
+        else if (autoWait > (target < 0.004 ? AUTO_START : AUTO_DWELL)) { autoWait = 0; step(1); autoGoal = pending; }
+      }
+    }
     const speed = dt > 0 ? Math.abs(stepP) * ROUTE / dt : 0;
     const t = tOf(current);
     const f = frameAt(t);
@@ -1305,6 +1352,8 @@ canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: bl
     requestAnimationFrame(() => { expectedY = forced !== null ? forced * maxScroll() : expectedY; window.scrollTo(0, expectedY); });
   }
   readScroll();
+  // auto play is the default, except for still previews, reduced motion, or a link that opens at the end
+  setAuto(!reduce && !still && target < END_P - 0.004);
   requestAnimationFrame(frame);
 })();
 </script>
