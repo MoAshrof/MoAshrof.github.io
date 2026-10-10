@@ -1,0 +1,1308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Mohamed El Boghdady: the career journey in 3D, from an assembly line in Cairo to group planning and procurement.">
+<title>Journey in 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,600..800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a fixed clay-model factory behind everything; scrolling a tall empty page drives the walk; a story card and Back/Next buttons float over it. Single visual world (matte clay), colors set explicitly. */
+:root {
+  --sky: #e9e8e4;
+  --ink: #2f343b;
+  --muted: #6b6f75;
+  --paper: #fbfaf8;
+  --rule: #d9d7d2;
+  --accent: #c9962a;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--sky); color: var(--ink); font-family: var(--body); }
+canvas#world { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+.track { height: 1900vh; }
+
+.top { position: fixed; z-index: 3; left: 0; right: 0; top: env(safe-area-inset-top, 0px); display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; pointer-events: none; }
+.top > * { pointer-events: auto; }
+.who { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; background: rgba(251,250,248,0.88); padding: 7px 10px; border-radius: 8px; }
+.who span { color: var(--muted); font-weight: 500; }
+.links { display: flex; gap: 6px; }
+.links a { font: 600 12px/1 var(--body); text-decoration: none; color: var(--ink); background: rgba(251,250,248,0.88); border: 1px solid var(--rule); padding: 8px 10px; border-radius: 8px; }
+.stops { position: fixed; z-index: 3; left: 16px; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 54px); display: flex; gap: 4px; max-width: 420px; }
+.stops i { flex: 1; height: 4px; border-radius: 2px; background: rgba(47,52,59,0.22); }
+.stops i.on { background: var(--accent); }
+
+.stepper { position: fixed; z-index: 4; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 70px); display: flex; gap: 6px; }
+.stepper button { font: 600 13px/1 var(--body); color: var(--ink); background: rgba(251,250,248,0.94); border: 1px solid var(--rule); border-radius: 999px; padding: 11px 14px; cursor: pointer; box-shadow: 0 4px 14px rgba(40,40,40,0.1); }
+.stepper button.next { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.stepper button:disabled { opacity: 0.4; cursor: default; }
+.stepper button:focus-visible, .links a:focus-visible, .card a:focus-visible, .card button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.card { position: fixed; z-index: 3; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); max-width: 430px; max-height: calc(100% - 140px); overflow: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 16px 14px; box-shadow: 0 10px 30px rgba(40,40,40,0.14); transition: opacity 0.35s, transform 0.35s; }
+.card.out { opacity: 0; transform: translateY(12px); pointer-events: none; visibility: hidden; transition: opacity 0.35s, transform 0.35s, visibility 0s linear 0.35s; }
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.stamp { font-weight: 600; letter-spacing: 0.1em; background: var(--ink); color: var(--paper); padding: 2px 7px; border-radius: 3px; }
+.card h2 { font-family: var(--display); font-stretch: 85%; font-weight: 800; font-size: 22px; line-height: 1.1; margin: 10px 0 2px; }
+.card .where { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+.big { font-family: var(--display); font-stretch: 72%; font-weight: 800; font-size: 38px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.big-label { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 2px 0 8px; }
+.card p { margin: 0; font-size: 14px; line-height: 1.5; }
+.intro h1 { font-family: var(--display); font-stretch: 78%; font-weight: 800; font-size: 30px; line-height: 1.02; margin: 8px 0 8px; }
+.intro p { color: #4a4f56; }
+.cue { margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.contact { display: grid; gap: 8px; margin-top: 10px; }
+.contact .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.contact .mail { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+.btn { font: 600 13px/1 var(--body); text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 12px; cursor: pointer; display: inline-block; }
+.btn.solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.fallback { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; z-index: 5; background: var(--sky); }
+.fallback a { color: var(--ink); font-weight: 600; }
+@media (max-width: 420px) { .who span { display: none; } }
+@media (max-width: 360px) { .links a { padding: 7px; } .stepper button { padding: 10px 12px; } }
+@media (min-width: 900px) {
+  .card { left: auto; right: 28px; bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 66px); max-width: 360px; padding: 14px; }
+  .card .big { font-size: 34px; }
+  .stops { left: 28px; }
+  .stepper { right: auto; top: auto; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); }
+  body[data-side="right"] .card { right: auto; left: 28px; top: calc(env(safe-area-inset-top, 0px) + 76px); }
+}
+@media (prefers-reduced-motion: reduce) { .card, .card.out { transition: none; } }
+</style>
+
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="track" aria-hidden="true"></div>
+
+<div class="top">
+  <div class="who">M. EL BOGHDADY <span>· the journey in 3D</span></div>
+  <nav class="links" aria-label="Other versions">
+    <a href="https://moashrof.github.io/" target="_blank" rel="noopener">2D page</a>
+    <a href="https://moashrof.github.io/cv.pdf" target="_blank" rel="noopener">CV (PDF)</a>
+  </nav>
+</div>
+<div class="stops" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<nav class="stepper" aria-label="Walk the journey">
+  <button type="button" id="prev">← Back</button>
+  <button type="button" id="next" class="next">Next →</button>
+</nav>
+
+<main>
+  <p class="sr" role="status" id="live"></p>
+  <section class="card intro" data-card="intro">
+    <div class="meta"><span class="stamp">START</span><span>2015 → today</span></div>
+    <h1>I started where an order ends, on the line, and walked upstream.</h1>
+    <p>Nine stops, from an assembly line in Cairo to planning and procurement for a group in Egypt and Ghana.</p>
+    <p class="cue">Scroll, swipe, or press Next.</p>
+  </section>
+
+  <section class="card out" data-card="0">
+    <div class="meta"><span class="stamp">MAKE</span><span>2015 – 2016 · Cairo</span></div>
+    <h2>The line</h2>
+    <p class="where">Industrial Engineer, Miraco Carrier</p>
+    <div class="big">19 → 24</div>
+    <div class="big-label">units per hour on the CDU-1 line (+26%)</div>
+    <p>I led a team of 4 engineers that timed 27 processes, found the bottleneck at the test stations and added a third one, with 5S, a test jig and a new conveyor.</p>
+  </section>
+
+  <section class="card out" data-card="1">
+    <div class="meta"><span class="stamp">SCHEDULE</span><span>2018 – 2021 · Giza</span></div>
+    <h2>The schedule</h2>
+    <p class="where">Production Planning Engineer, Elif Global</p>
+    <div class="big">89% → 95%</div>
+    <div class="big-label">on-time delivery, against the customer's date</div>
+    <p>200–300 orders a month across 26 machines and five departments, from extrusion to slitting. Waiting between departments: from 4–7 days to 1–3.</p>
+  </section>
+
+  <section class="card out" data-card="2">
+    <div class="meta"><span class="stamp">PLAN</span><span>2021 · 6th of October</span></div>
+    <h2>A plan, from zero</h2>
+    <p class="where">Senior Material Planning Engineer, YES PAC</p>
+    <div class="big">Week 2</div>
+    <div class="big-label">when I took over leading planning</div>
+    <p>No planning department, no MRP. I built one plan from Sales' forecasts, MRP with safety stocks and reorder points, and cut local supplier lead time from 18 to 14.5 days.</p>
+  </section>
+
+  <section class="card out" data-card="3">
+    <div class="meta"><span class="stamp">SYSTEMS</span><span>2021 – 2024 · YES PAC</span></div>
+    <h2>The system and the floor</h2>
+    <p class="where">Planning Supervisor</p>
+    <div class="big">70% → 96%</div>
+    <div class="big-label">stock count accuracy in the Transit area</div>
+    <p>SAP key user for PP, helping design MM, SD and WM; live November 2023. I took over Transit, between production and warehouse, and grew it from 12 to 19 people. Waiting between departments: 4 hours to 30 minutes.</p>
+  </section>
+
+  <section class="card out" data-card="4">
+    <div class="meta"><span class="stamp">HOLD THE LINE</span><span>2023 – 2024 · Egypt</span></div>
+    <h2>The storm</h2>
+    <p class="where">Leading planning without a Supply Chain Manager</p>
+    <div class="big">0</div>
+    <div class="big-label">machine stops for lack of material</div>
+    <p>For a year I reported directly to the Chief Development Officer while Egypt went through its currency crisis. We moved to local suppliers, and safety stocks carried the first month.</p>
+  </section>
+
+  <section class="card out" data-card="5">
+    <div class="meta"><span class="stamp">ALIGN</span><span>2025 · YES PAC</span></div>
+    <h2>The table</h2>
+    <p class="where">Planning Manager · process owner of S&amp;OP</p>
+    <div class="big">20% → 49%</div>
+    <div class="big-label">forecast accuracy (by size), first year of S&amp;OP</div>
+    <p>A monthly plan agreed with two board members, the COO, CCO, CFO and Supply Chain Director. OTIF from 60% to ~95%; machine utilization from 76% to 90%+.</p>
+  </section>
+
+  <section class="card out" data-card="6">
+    <div class="meta"><span class="stamp">BUY</span><span>2026 · Strait of Hormuz</span></div>
+    <h2>The strait</h2>
+    <p class="where">Group Head of Planning &amp; Procurement</p>
+    <div class="big">57 / 57</div>
+    <div class="big-label">machines kept running through the closure</div>
+    <p>100% of our polymer came through the Gulf. Within 2–3 weeks we had other sources in the US, Russia and the local market, and cover went from 90 to 120 days. ~$0.47M saved.</p>
+  </section>
+
+  <section class="card out" data-card="7">
+    <div class="meta"><span class="stamp">GROUP</span><span>2026 · Egypt and Ghana</span></div>
+    <h2>Three companies, two countries</h2>
+    <p class="where">YES PAC, Sprint Pac and YES PAC Ghana · team of 12</p>
+    <div class="big">190 → 171</div>
+    <div class="big-label">days in the cash conversion cycle</div>
+    <p>Better supplier terms; planning for the new Ghana plant, from its first forecast to its machines; foreign indirect lead time from 82 to 40 days.</p>
+  </section>
+
+  <section class="card out" data-card="8">
+    <div class="meta"><span class="stamp">NEXT SHIFT</span><span>2026 · AI</span></div>
+    <h2>The next shift</h2>
+    <p class="where">Leading AI adoption in the factory</p>
+    <div class="big">30+</div>
+    <div class="big-label">colleagues trained in two rounds of workshops</div>
+    <p>AI agents and automatic SAP data feeds now handle stock triage, procurement analysis, capex tracking and lead-time KPIs, saving at least half a day a week.</p>
+  </section>
+
+  <section class="card out" data-card="outro">
+    <div class="meta"><span class="stamp">DELIVERED</span><span>Thank you for walking with me</span></div>
+    <h2>Delivered.</h2>
+    <p>Open to senior roles across supply chain, and to business development roles.</p>
+    <div class="contact">
+      <div class="row"><span class="mail" id="email">mohamed.elboghdaddy@gmail.com</span><button class="btn solid" type="button" id="copy-email">Copy email</button></div>
+      <div class="row"><a class="btn" href="https://moashrof.github.io/cv.pdf" target="_blank" rel="noopener">Open CV (PDF)</a><a class="btn" href="https://www.linkedin.com/in/mohamed-ashraf-124119a1" target="_blank" rel="noopener">LinkedIn</a></div>
+    </div>
+  </section>
+</main>
+
+<div class="fallback" id="fallback" hidden>
+  <p>Your browser can't show the 3D view. <a href="https://moashrof.github.io/">Open the 2D journey</a> instead.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+(function () {
+  if (!window.THREE || !window.WebGLRenderingContext) { document.getElementById('fallback').hidden = false; return; }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const small = window.matchMedia('(max-width: 700px)').matches;
+  const canvas = document.getElementById('world');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
+  catch (e) { document.getElementById('fallback').hidden = false; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 1.75));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.92;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const SKY = 0xe9e8e4;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(SKY);
+  scene.fog = new THREE.Fog(SKY, 26, 74);
+  const camera = new THREE.PerspectiveCamera(small ? 58 : 48, 1, 0.1, 130); // far enough for the horizon at the end
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xbdb7ae, 0.5));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.06));
+  const sun = new THREE.DirectionalLight(0xfffaf2, 1.4);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
+  sun.shadow.camera.left = -22; sun.shadow.camera.right = 22; sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 70;
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+  scene.add(sun); scene.add(sun.target);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.32); // soft front light that follows the camera
+  scene.add(fillLight); scene.add(fillLight.target);
+
+  // Clay palette: one family of greys, one muted accent
+  const clay = (c, rough) => new THREE.MeshStandardMaterial({ color: c, roughness: rough == null ? 0.92 : rough, metalness: 0 });
+  const clayS = (c, rough, flat) => new THREE.MeshStandardMaterial({ color: new THREE.Color(c).convertSRGBToLinear(), roughness: rough, metalness: 0, flatShading: !!flat });
+  const M = {
+    floor: clay(0xdcd9d3), white: clay(0xf4f3f0), light: clay(0xe6e4df), mid: clay(0xcfccc6),
+    dark: clay(0xa29e97), ink: clay(0x3b3f46), accent: clay(0xc9962a), belt: clay(0x8f8b85),
+    water: clay(0xc7d0d4, 0.6), cloud: clay(0x8d8f93, 1),
+    suit: clay(0x272b32, 0.7), suitDark: clay(0x1d2026, 0.7), shirt: clay(0xf6f5f2, 0.85), tie: clay(0x2d4064, 0.55),
+    skin: clay(0xb5836a, 0.75), hair: clay(0x231c17, 0.9), beard: clay(0x2e251f, 0.95), shoe: clay(0x141517, 0.35), lip: clay(0x7a3f35, 0.7), lapel: clay(0x22262c, 0.7),
+    // walkway, park furniture and trees (picked as sRGB, so converted to the linear colors three r128 expects)
+    road: clayS(0x1c1d20, 0.8), wood: clayS(0x7a4a28, 0.8), metal: clayS(0x2b2c30, 0.5), trunk: clayS(0x5e3d26, 0.9),
+    leaf: clayS(0x5f9a45, 0.9, true), leaf2: clayS(0x4a8238, 0.9, true),
+    // story colors: used only on the thing that changes at each station
+    go: clayS(0x3f9a6b, 0.7),        // the improvement: new booth, local truck, new route
+    wait: clayS(0xc4553f, 0.75),     // the problem that clears: queues, the closed strait
+    hiVis: clayS(0xe8822e, 0.75),    // new people on the Transit floor
+    bin: clayS(0x7ea6c9, 0.8),       // organised stock on the new planning shelves
+    people: [clayS(0x3d6fb3, 0.7), clayS(0x2f9e8f, 0.7), clayS(0xc4703f, 0.7)] // AI trainees
+  };
+
+  // Geometry helpers (cached so repeated parts share GPU memory)
+  const gCache = new Map();
+  const cached = (key, make) => { if (!gCache.has(key)) gCache.set(key, make()); return gCache.get(key); };
+  function roundedGeo(w, h, d, r) {
+    return cached(['rb', w, h, d, r].join('|'), () => {
+      r = Math.max(0.001, Math.min(r, w / 2 - 0.002, h / 2 - 0.002, d / 2 - 0.002));
+      const iw = w - 2 * r, ih = h - 2 * r, cr = Math.min(r * 0.6, iw / 2 - 0.001, ih / 2 - 0.001);
+      const s = new THREE.Shape();
+      const x0 = -iw / 2, y0 = -ih / 2;
+      s.moveTo(x0 + cr, y0);
+      s.lineTo(x0 + iw - cr, y0); s.quadraticCurveTo(x0 + iw, y0, x0 + iw, y0 + cr);
+      s.lineTo(x0 + iw, y0 + ih - cr); s.quadraticCurveTo(x0 + iw, y0 + ih, x0 + iw - cr, y0 + ih);
+      s.lineTo(x0 + cr, y0 + ih); s.quadraticCurveTo(x0, y0 + ih, x0, y0 + ih - cr);
+      s.lineTo(x0, y0 + cr); s.quadraticCurveTo(x0, y0, x0 + cr, y0);
+      const g = new THREE.ExtrudeGeometry(s, { depth: Math.max(0.001, d - 2 * r), bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 3, curveSegments: 5 });
+      g.center();
+      return g;
+    });
+  }
+  const rbox = (w, h, d, m, r) => { const o = new THREE.Mesh(roundedGeo(w, h, d, r == null ? Math.min(w, h, d) * 0.18 : r), m); o.castShadow = o.receiveShadow = true; return o; };
+  const cyl = (rt, rb, h, m, seg) => { const o = new THREE.Mesh(cached(['cy', rt, rb, h, seg || 20].join('|'), () => new THREE.CylinderGeometry(rt, rb, h, seg || 20)), m); o.castShadow = o.receiveShadow = true; return o; };
+  const ball = (r, m, sx, sy, sz) => { const o = new THREE.Mesh(cached('sp|' + r, () => new THREE.SphereGeometry(r, 20, 14)), m); o.scale.set(sx || 1, sy || 1, sz || 1); o.castShadow = true; return o; };
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 520), M.floor);
+  ground.position.z = -60; // reaches past the end of the route, under the horizon
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+
+  // The route
+  const curve = new THREE.CatmullRomCurve3([
+    [0, 14], [0, 4], [2, -8], [5, -20], [4, -32], [0, -44], [-5, -56], [-5, -68], [0, -80], [5, -92],
+    [5, -104], [0, -116], [-5, -128], [-5, -140], [0, -152], [4, -164], [3, -176], [0, -188], [0, -198]
+  ].map(([x, z]) => new THREE.Vector3(x, 0, z)));
+  const UP = new THREE.Vector3(0, 1, 0);
+  function frameAt(t) {
+    const p = curve.getPointAt(t), tan = curve.getTangentAt(t);
+    return { p, tan, side: new THREE.Vector3().crossVectors(tan, UP).normalize() };
+  }
+
+  // Conveyor (instanced)
+  (function () {
+    const N = 360, segLen = curve.getLength() / N * 1.06;
+    const belt = new THREE.InstancedMesh(roundedGeo(1.7, 0.16, segLen, 0.03), M.road, N);
+    const edgeA = new THREE.InstancedMesh(roundedGeo(0.2, 0.24, segLen * 0.98, 0.05), M.accent, N * 2);
+    const edgeB = new THREE.InstancedMesh(roundedGeo(0.2, 0.24, segLen * 0.98, 0.05), M.light, N * 2);
+    const dummy = new THREE.Object3D();
+    let a = 0, b = 0;
+    for (let i = 0; i < N; i++) {
+      const f = frameAt((i + 0.5) / N);
+      dummy.position.copy(f.p).setY(0.08); dummy.lookAt(dummy.position.clone().add(f.tan)); dummy.updateMatrix();
+      belt.setMatrixAt(i, dummy.matrix);
+      [-1, 1].forEach(sd => {
+        dummy.position.copy(f.p).addScaledVector(f.side, sd * 0.97).setY(0.12);
+        dummy.lookAt(dummy.position.clone().add(f.tan)); dummy.updateMatrix();
+        if (i % 3 === 0) edgeA.setMatrixAt(a++, dummy.matrix); else edgeB.setMatrixAt(b++, dummy.matrix);
+      });
+    }
+    edgeA.count = a; edgeB.count = b;
+    [belt, edgeA, edgeB].forEach(m => { m.castShadow = m.receiveShadow = true; m.instanceMatrix.needsUpdate = true; scene.add(m); });
+  })();
+
+  // Text textures
+  function textTexture(draw, w, h) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    draw(c.getContext('2d'), w, h);
+    const tx = new THREE.CanvasTexture(c); tx.anisotropy = 4; tx.encoding = THREE.sRGBEncoding; return tx;
+  }
+  const FONT = 'Arial, Helvetica, sans-serif';
+  const texPlane = (tx, w, h) => new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: tx, roughness: 0.95 }));
+  function sign(line1, line2) {
+    const tx = textTexture((g, w, h) => {
+      g.fillStyle = '#f4f3f0'; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#c9962a'; g.fillRect(32, 118, 70, 8);
+      g.fillStyle = '#2f343b'; g.font = '700 70px ' + FONT; g.fillText(line1, 32, 96);
+      g.fillStyle = '#6b6f75'; g.font = '600 34px ' + FONT; g.fillText(line2, 32, 176, w - 60);
+    }, 640, 220);
+    const grp = new THREE.Group();
+    const back = rbox(4.4, 1.6, 0.16, M.white, 0.06); back.position.set(0, 3.2, 0); grp.add(back);
+    const face = texPlane(tx, 4.1, 1.4); face.position.set(0, 3.2, 0.085); grp.add(face);
+    const post = rbox(0.16, 2.6, 0.16, M.mid, 0.05); post.position.set(0, 1.3, -0.05); grp.add(post);
+    const foot = rbox(0.9, 0.12, 0.6, M.mid, 0.05); foot.position.set(0, 0.06, -0.05); grp.add(foot);
+    grp.scale.setScalar(0.72);
+    return grp;
+  }
+  function screenTex(draw) { return textTexture(draw, 512, 300); }
+
+  // A figurine in a suit. Front is +z.
+  function figure(opts) {
+    const o = Object.assign({ suit: M.suit, lapel: M.suitDark, shirt: M.shirt, tie: M.tie, skin: M.skin, hair: M.hair, beardMat: M.beard, shoe: M.shoe, beard: true }, opts || {});
+    const root = new THREE.Group();
+    const body = new THREE.Group(); root.add(body);
+    const legs = [], arms = [];
+    [-1, 1].forEach(sd => {
+      const hip = new THREE.Group(); hip.position.set(sd * 0.1, 0.96, 0);
+      const thigh = cyl(0.1, 0.082, 0.47, o.suit); thigh.position.y = -0.235; hip.add(thigh);
+      const knee = new THREE.Group(); knee.position.y = -0.47; hip.add(knee);
+      const shin = cyl(0.08, 0.066, 0.43, o.suit); shin.position.y = -0.215; knee.add(shin);
+      const shoe = rbox(0.12, 0.08, 0.29, o.shoe, 0.035); shoe.position.set(0, -0.45, 0.045); knee.add(shoe);
+      body.add(hip); legs.push({ hip, knee, sd });
+    });
+    const prof = [[0.0, 0.9], [0.19, 0.9], [0.205, 0.98], [0.182, 1.1], [0.19, 1.22], [0.222, 1.36], [0.232, 1.45], [0.2, 1.5], [0.11, 1.535], [0.0, 1.54]].map(([r, y]) => new THREE.Vector2(r, y));
+    const jacket = new THREE.Mesh(cached('jacket', () => new THREE.LatheGeometry(prof, 32)), o.suit);
+    jacket.scale.z = 0.6; jacket.castShadow = true; body.add(jacket);
+    const zf = 0.6 * 0.222;
+    const vShape = new THREE.Shape(); vShape.moveTo(-0.075, 0.2); vShape.lineTo(0.075, 0.2); vShape.lineTo(0, -0.02); vShape.lineTo(-0.075, 0.2);
+    const shirtV = new THREE.Mesh(cached('shirtV', () => new THREE.ExtrudeGeometry(vShape, { depth: 0.01, bevelEnabled: false })), o.shirt);
+    shirtV.position.set(0, 1.31, zf + 0.004); body.add(shirtV);
+    if (o.tie) {
+      const tShape = new THREE.Shape(); tShape.moveTo(-0.018, 0.2); tShape.lineTo(0.018, 0.2); tShape.lineTo(0.03, 0.02); tShape.lineTo(0, -0.03); tShape.lineTo(-0.03, 0.02); tShape.lineTo(-0.018, 0.2);
+      const tie = new THREE.Mesh(cached('tie', () => new THREE.ExtrudeGeometry(tShape, { depth: 0.012, bevelEnabled: false })), o.tie);
+      tie.position.set(0, 1.3, zf + 0.012); body.add(tie);
+    }
+    [-1, 1].forEach(sd => { const lap = rbox(0.05, 0.26, 0.02, o.lapel, 0.008); lap.position.set(sd * 0.055, 1.4, zf + 0.012); lap.rotation.z = sd * 0.33; body.add(lap); });
+    [1.18, 1.08].forEach(y => { const btn = ball(0.012, o.lapel); btn.position.set(0.012, y, 0.6 * 0.19 + 0.006); body.add(btn); });
+    const neck = cyl(0.052, 0.058, 0.11, o.skin); neck.position.y = 1.58; body.add(neck);
+    const collar = cyl(0.064, 0.07, 0.05, o.shirt); collar.position.y = 1.555; body.add(collar);
+    const head = new THREE.Group(); head.position.y = 1.74; body.add(head);
+    head.add(ball(0.116, o.skin, 0.88, 1.1, 0.98));
+    const hairCap = new THREE.Mesh(cached('hairCap', () => new THREE.SphereGeometry(0.118, 22, 14, 0, Math.PI * 2, 0, Math.PI * 0.42)), o.hair);
+    hairCap.scale.set(0.93, 1.05, 1.04); hairCap.position.set(0, 0.012, -0.006); hairCap.rotation.x = -0.18; head.add(hairCap);
+    const hairBack = ball(0.105, o.hair, 0.92, 0.85, 0.75); hairBack.position.set(0, 0.0, -0.04); head.add(hairBack);
+    if (o.beard) {
+      const beard = new THREE.Mesh(cached('beard', () => new THREE.SphereGeometry(0.118, 24, 16, Math.PI * 0.06, Math.PI * 0.88, Math.PI * 0.62, Math.PI * 0.26)), o.beardMat);
+      beard.scale.set(0.9, 1.1, 1.0); head.add(beard);
+      const mo = ball(0.03, o.beardMat, 1.6, 0.45, 0.6); mo.position.set(0, -0.045, 0.098); head.add(mo);
+    }
+    const nose = ball(0.017, o.skin, 0.8, 1.25, 1.1); nose.position.set(0, -0.012, 0.11); head.add(nose);
+    [-1, 1].forEach(sd => { const brow = ball(0.022, o.hair, 1.3, 0.35, 0.5); brow.position.set(sd * 0.04, 0.035, 0.1); head.add(brow); });
+    [-1, 1].forEach(sd => { const ear = ball(0.022, o.skin, 0.5, 1, 0.8); ear.position.set(sd * 0.102, 0.0, -0.005); head.add(ear); });
+    [-1, 1].forEach(sd => {
+      const sh = new THREE.Group(); sh.position.set(sd * 0.245, 1.44, 0); sh.rotation.z = sd * 0.06;
+      const upper = cyl(0.064, 0.056, 0.32, o.suit); upper.position.y = -0.16; sh.add(upper);
+      const elbow = new THREE.Group(); elbow.position.y = -0.32; sh.add(elbow);
+      const fore = cyl(0.055, 0.047, 0.27, o.suit); fore.position.y = -0.135; elbow.add(fore);
+      const cuff = cyl(0.044, 0.044, 0.025, o.shirt); cuff.position.y = -0.28; elbow.add(cuff);
+      const hand = ball(0.042, o.skin, 0.75, 1.25, 0.6); hand.position.y = -0.33; elbow.add(hand);
+      body.add(sh); arms.push({ sh, elbow, sd });
+    });
+    root.userData = { body, legs, arms };
+    return root;
+  }
+  function pose(fig, phase, amount) {
+    const s = Math.sin(phase) * amount;
+    fig.userData.legs.forEach(l => {
+      l.hip.rotation.x = s * l.sd * 0.5;
+      l.knee.rotation.x = Math.max(0, -Math.sin(phase + (l.sd > 0 ? 0 : Math.PI))) * 0.55 * amount;
+    });
+    const r = fig.userData.rest, k = Math.min(1, amount);
+    fig.userData.arms.forEach(a => {
+      const sx = -s * a.sd * 0.38, ex = -0.18 - Math.abs(s) * 0.12;
+      if (!r) { a.sh.rotation.x = sx; a.elbow.rotation.x = ex; return; }
+      // blend from hands-in-pockets (standing) to arm swing (walking)
+      a.sh.rotation.x = r.shX * (1 - k) + sx * k; a.sh.rotation.z = a.sd * r.shZ * (1 - k);
+      a.elbow.rotation.x = r.elX * (1 - k) + ex * k; a.elbow.rotation.z = a.sd * r.elZ * (1 - k);
+    });
+    fig.userData.body.position.y = Math.abs(Math.cos(phase)) * 0.025 * amount;
+  }
+  function sit(fig) {
+    fig.userData.legs.forEach(l => { l.hip.rotation.x = -1.5; l.knee.rotation.x = 1.5; });
+    fig.userData.arms.forEach(a => { a.sh.rotation.x = -0.55; a.elbow.rotation.x = -0.5; });
+    fig.userData.body.position.y = -0.44;
+    return fig;
+  }
+  const workerOpts = { suit: M.mid, lapel: M.dark, shirt: M.white, tie: null, skin: M.light, hair: M.dark, beardMat: M.dark, shoe: M.dark, beard: false };
+  const guestOpts = { suit: M.dark, lapel: M.ink, shirt: M.white, tie: M.mid, skin: M.light, hair: M.ink, beardMat: M.ink, shoe: M.ink, beard: false };
+
+  // The hero: a Pixar-style clay character (white slim suit, orange tie, round glasses). Front is +z.
+  // Stands with hands in pockets; pose() blends to a natural arm swing while walking.
+  function heroFigure() {
+    const H = {
+      suit: clay(0xf7f6f3, 0.8), suitShade: clay(0xe6e4df, 0.8), trousers: clay(0xeceae6, 0.8),
+      shirt: clay(0xffffff, 0.85), orange: clay(0xd24d1a, 0.5), skin: clay(0xe2ab88, 0.7),
+      hair: clay(0x24262a, 0.7), shoe: clay(0x3e3a37, 0.45), iris: clay(0x5b3a24, 0.4),
+      dark: clay(0x1f2125, 0.4), frame: clay(0x6b6f76, 0.35), lip: clay(0xb5654f, 0.6)
+    };
+    const root = new THREE.Group();
+    const body = new THREE.Group(); root.add(body);
+    const legs = [], arms = [];
+    // legs: slim trousers, rounded shoes
+    [-1, 1].forEach(sd => {
+      const hip = new THREE.Group(); hip.position.set(sd * 0.095, 0.95, 0);
+      const thigh = cyl(0.092, 0.075, 0.47, H.trousers, 24); thigh.position.y = -0.235; hip.add(thigh);
+      const knee = new THREE.Group(); knee.position.y = -0.47; hip.add(knee);
+      const shin = cyl(0.073, 0.064, 0.42, H.trousers, 24); shin.position.y = -0.21; knee.add(shin);
+      const shoe = rbox(0.12, 0.08, 0.24, H.shoe, 0.04); shoe.position.set(0, -0.44, 0.03); knee.add(shoe);
+      const toe = ball(0.06, H.shoe, 1, 0.62, 1.2); toe.position.set(0, -0.447, 0.135); knee.add(toe);
+      body.add(hip); legs.push({ hip, knee, sd });
+    });
+    // orange belt
+    const belt = cyl(0.19, 0.19, 0.045, H.orange, 32); belt.scale.z = 0.66; belt.position.y = 0.96; body.add(belt);
+    // jacket: white, slim waist, soft shoulders
+    const prof = [[0.0, 0.88], [0.205, 0.88], [0.212, 0.95], [0.186, 1.05], [0.19, 1.15], [0.225, 1.27], [0.245, 1.36], [0.232, 1.41], [0.14, 1.445], [0.0, 1.45]].map(([r, y]) => new THREE.Vector2(r, y));
+    const jacket = new THREE.Mesh(cached('hero2Jacket', () => new THREE.LatheGeometry(prof, 40)), H.suit);
+    jacket.scale.z = 0.64; jacket.castShadow = jacket.receiveShadow = true; body.add(jacket);
+    const zc = 0.64 * 0.232; // chest front
+    const v = new THREE.Shape(); v.moveTo(-0.075, 0.22); v.lineTo(0.075, 0.22); v.lineTo(0, -0.01); v.lineTo(-0.075, 0.22);
+    const shirtV = new THREE.Mesh(cached('hero2ShirtV', () => new THREE.ExtrudeGeometry(v, { depth: 0.012, bevelEnabled: false })), H.shirt);
+    shirtV.position.set(0, 1.2, zc - 0.004); body.add(shirtV);
+    const t = new THREE.Shape(); t.moveTo(-0.018, 0.19); t.lineTo(0.018, 0.19); t.lineTo(0.03, 0.02); t.lineTo(0, -0.03); t.lineTo(-0.03, 0.02); t.lineTo(-0.018, 0.19);
+    const tie = new THREE.Mesh(cached('hero2Tie', () => new THREE.ExtrudeGeometry(t, { depth: 0.014, bevelEnabled: false })), H.orange);
+    tie.position.set(0, 1.2, zc + 0.006); body.add(tie);
+    const knot = ball(0.024, H.orange, 1.15, 0.9, 0.7); knot.position.set(0, 1.405, zc + 0.012); body.add(knot);
+    [-1, 1].forEach(sd => {
+      const lap = rbox(0.07, 0.24, 0.02, H.suitShade, 0.01);
+      lap.position.set(sd * 0.072, 1.31, zc + 0.012); lap.rotation.z = sd * 0.4; body.add(lap);
+      const cp = new THREE.Shape(); cp.moveTo(0, 0); cp.lineTo(sd * 0.048, 0.028); cp.lineTo(sd * 0.012, -0.055); cp.lineTo(0, 0);
+      const collarPt = new THREE.Mesh(cached('hero2Collar' + sd, () => new THREE.ExtrudeGeometry(cp, { depth: 0.01, bevelEnabled: false })), H.shirt);
+      collarPt.position.set(sd * 0.012, 1.44, zc + 0.002); body.add(collarPt);
+      const flap = rbox(0.12, 0.025, 0.03, H.suitShade, 0.01); flap.position.set(sd * 0.12, 1.02, 0.64 * 0.19 + 0.004); flap.rotation.y = sd * 0.35; body.add(flap);
+    });
+    const btn = ball(0.014, H.suitShade); btn.position.set(0, 1.06, 0.64 * 0.188 + 0.006); body.add(btn);
+    // neck and the big friendly head
+    const neck = cyl(0.062, 0.068, 0.1, H.skin); neck.position.y = 1.475; body.add(neck);
+    const collar = cyl(0.072, 0.078, 0.045, H.shirt); collar.position.y = 1.448; body.add(collar);
+    const head = new THREE.Group(); head.position.y = 1.68; body.add(head);
+    head.add(ball(0.19, H.skin, 0.9, 1.04, 0.93));
+    const jaw = ball(0.14, H.skin, 0.94, 0.78, 0.9); jaw.position.set(0, -0.08, 0.02); head.add(jaw);
+    [-1, 1].forEach(sd => {
+      const cheek = ball(0.05, H.skin, 1, 0.8, 0.7); cheek.position.set(sd * 0.085, -0.045, 0.125); head.add(cheek);
+      const white = ball(0.042, H.shirt, 1, 1.12, 0.55); white.position.set(sd * 0.068, 0.0, 0.152); white.castShadow = false; head.add(white);
+      const iris = ball(0.029, H.iris, 1, 1.08, 0.5); iris.position.set(sd * 0.064, -0.004, 0.168); iris.castShadow = false; head.add(iris);
+      const pupil = ball(0.014, H.dark, 1, 1.08, 0.5); pupil.position.set(sd * 0.064, -0.004, 0.176); pupil.castShadow = false; head.add(pupil);
+      const glint = ball(0.007, H.shirt); glint.position.set(sd * 0.064 + 0.01, 0.01, 0.181); glint.castShadow = false; head.add(glint);
+      const lid = new THREE.Mesh(cached('hero2Lid', () => new THREE.SphereGeometry(0.045, 18, 10, 0, Math.PI * 2, 0, Math.PI * 0.36)), H.skin);
+      lid.scale.set(1, 1.1, 0.6); lid.position.set(sd * 0.068, 0.004, 0.15); head.add(lid);
+      const lash = new THREE.Mesh(cached('hero2Lash', () => new THREE.TorusGeometry(0.041, 0.0045, 6, 16, Math.PI * 0.9)), H.dark);
+      lash.position.set(sd * 0.068, 0.006, 0.168); lash.rotation.z = Math.PI * 0.05; head.add(lash);
+      const brow = rbox(0.078, 0.022, 0.024, H.hair, 0.009); brow.position.set(sd * 0.07, 0.074, 0.16); brow.rotation.z = -sd * 0.12; head.add(brow);
+      const ear = ball(0.038, H.skin, 0.42, 1, 0.72); ear.position.set(sd * 0.168, -0.01, -0.005); head.add(ear);
+      // round glasses
+      const rim = new THREE.Mesh(cached('hero2Rim', () => new THREE.TorusGeometry(0.05, 0.0055, 8, 28)), H.frame);
+      rim.position.set(sd * 0.07, 0.0, 0.185); head.add(rim);
+      const arm = rbox(0.008, 0.008, 0.17, H.frame, 0.003); arm.position.set(sd * 0.16, 0.005, 0.1); arm.rotation.y = sd * 0.12; head.add(arm);
+    });
+    const bridge = rbox(0.035, 0.008, 0.008, H.frame, 0.003); bridge.position.set(0, 0.01, 0.19); head.add(bridge);
+    const nose = ball(0.028, H.skin, 0.8, 1.0, 0.95); nose.position.set(0, -0.04, 0.172); head.add(nose);
+    const smile = new THREE.Mesh(cached('hero2Smile', () => new THREE.TorusGeometry(0.036, 0.0065, 6, 18, Math.PI)), H.lip);
+    smile.rotation.set(-0.2, 0, Math.PI); smile.position.set(0, -0.085, 0.165); head.add(smile);
+    // hair: dark grey, swept back with a side part
+    // close-cut sides and back that hug the head, volume swept up and back on top, part on his right
+    const cap = new THREE.Mesh(cached('hero2Cap', () => new THREE.SphereGeometry(0.194, 30, 16, 0, Math.PI * 2, 0, Math.PI * 0.4)), H.hair);
+    cap.scale.set(0.92, 0.95, 0.96); cap.rotation.x = -0.42; cap.position.set(0, 0.03, -0.012); head.add(cap);
+    const back = ball(0.172, H.hair, 0.93, 0.78, 0.8); back.position.set(0, -0.01, -0.06); head.add(back);
+    const top = ball(0.1, H.hair, 1.55, 0.62, 1.55); top.position.set(0.015, 0.16, -0.01); head.add(top);
+    const front = ball(0.075, H.hair, 1.8, 1.0, 0.85); front.position.set(0.035, 0.2, 0.085); front.rotation.set(-1.0, 0, -0.14); head.add(front);
+    const swoop = ball(0.06, H.hair, 1.6, 0.7, 0.9); swoop.position.set(0.075, 0.175, 0.07); swoop.rotation.set(-0.7, 0, -0.45); head.add(swoop);
+    const partLine = rbox(0.006, 0.012, 0.14, H.skin, 0.003); partLine.position.set(-0.07, 0.17, 0.02); partLine.rotation.x = -0.3; head.add(partLine);
+    // arms: white sleeves, hands
+    [-1, 1].forEach(sd => {
+      const sh = new THREE.Group(); sh.position.set(sd * 0.245, 1.355, 0);
+      sh.add(ball(0.066, H.suit, 1, 0.85, 1));
+      const upper = cyl(0.066, 0.058, 0.3, H.suit, 24); upper.position.y = -0.15; sh.add(upper);
+      const elbow = new THREE.Group(); elbow.position.y = -0.3; sh.add(elbow);
+      const fore = cyl(0.058, 0.05, 0.26, H.suit, 24); fore.position.y = -0.13; elbow.add(fore);
+      const cuff = cyl(0.046, 0.046, 0.025, H.shirt); cuff.position.y = -0.27; elbow.add(cuff);
+      const hand = ball(0.045, H.skin, 0.72, 1.1, 0.55); hand.position.y = -0.31; elbow.add(hand);
+      body.add(sh); arms.push({ sh, elbow, sd });
+    });
+    root.userData = { body, legs, arms, rest: { shX: -0.12, shZ: 0.48, elX: -0.55, elZ: -1.15 } };
+    return root;
+  }
+
+  // The walker: Mohamed's own rigged model (model/mohamed.json = glTF with walk + idle clips;
+  // kept as .json + .jpg because artifacts do not serve .glb).
+  // The hand-built figure stands in until the model loads, or if it cannot load.
+  const me = new THREE.Group();
+  const stand = heroFigure();
+  me.add(stand);
+  scene.add(me);
+  let mixer = null, walkAct = null, idleAct = null;
+  const lookUp = []; // neck + head: the idle clip looks at the floor, so lift the chin (this rig pitches on z)
+  if (THREE.GLTFLoader) {
+    new THREE.GLTFLoader().load('mohamed.json', gltf => {
+      const model = gltf.scene;
+      const box = new THREE.Box3().setFromObject(model);
+      const k = 1.9 / (box.max.y - box.min.y);
+      model.scale.setScalar(k);
+      model.position.y = -box.min.y * k;
+      model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
+      const walkClip = gltf.animations.find(c => c.name === 'walk'), idleClip = gltf.animations.find(c => c.name === 'idle');
+      if (!walkClip || !idleClip) return; // keep the stand-in figure
+      // build everything first, then switch over, so a bad file never leaves half a rig behind
+      const mx = new THREE.AnimationMixer(model);
+      const wa = mx.clipAction(walkClip), ia = mx.clipAction(idleClip);
+      wa.play(); ia.play(); wa.setEffectiveWeight(0); ia.setEffectiveWeight(1);
+      model.traverse(o => { if (o.isBone && (o.name === 'Head' || o.name === 'Neck')) lookUp.push(o); });
+      mixer = mx; walkAct = wa; idleAct = ia;
+      me.remove(stand); me.add(model);
+    }, undefined, () => { /* keep the stand-in figure */ });
+  }
+
+  // Nine stops, evenly spaced along the route
+  const STOPS = Array.from({ length: 9 }, (_, i) => 0.07 + i * 0.105);
+  const stationCenters = [];
+  const animated = [];
+  function placeBeside(group, t, offset) {
+    const f = frameAt(t);
+    group.position.copy(f.p).addScaledVector(f.side, offset);
+    group.rotation.y = Math.atan2(-f.tan.z, f.tan.x) + (offset > 0 ? Math.PI : 0); // local +x along route, +z faces route
+    scene.add(group);
+    stationCenters.push({ t, pos: group.position.clone().setY(1.2), side: offset > 0 ? 'right' : 'left' });
+  }
+  function screenOnStand(tx, w, h, y) {
+    const grp = new THREE.Group();
+    const bezel = rbox(w + 0.12, h + 0.12, 0.08, M.ink, 0.03); bezel.position.y = y; grp.add(bezel);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tx })); scr.position.set(0, y, 0.07); grp.add(scr);
+    const stand = rbox(0.12, y - h / 2, 0.12, M.ink, 0.03); stand.position.set(0, (y - h / 2) / 2, -0.06); grp.add(stand);
+    const foot = rbox(0.8, 0.06, 0.5, M.ink, 0.02); foot.position.set(0, 0.03, -0.06); grp.add(foot);
+    return grp;
+  }
+
+  // Arrival moments: each station gets a hook(k), k going 0 → 1 once Mohamed has arrived and stopped there
+  const hooks = [];
+  // A factory KPI board beside the walkway that counts from the "before" to the "after" number.
+  // fmt(k) returns [big number, small line]; the canvas is only redrawn when the text changes.
+  function kpiBoard(label, fmt) {
+    const c = document.createElement('canvas'); c.width = 512; c.height = 256;
+    const tx = new THREE.CanvasTexture(c); tx.encoding = THREE.sRGBEncoding; tx.anisotropy = 4;
+    let last = '';
+    function draw(k) {
+      const [big, small] = fmt(k), key = big + '|' + small + '|' + (k >= 0.999);
+      if (key === last) return;
+      last = key;
+      const g = c.getContext('2d');
+      g.fillStyle = '#2f343b'; g.fillRect(0, 0, 512, 256);
+      g.fillStyle = '#cfccc6'; g.font = '600 27px ' + FONT; g.fillText(label, 28, 50, 456);
+      g.fillStyle = '#c9962a'; g.fillRect(28, 66, 60, 6);
+      g.fillStyle = k >= 0.999 ? '#6fcf8e' : '#ffffff'; g.font = '800 104px ' + FONT; g.fillText(big, 26, 186, 460); // green once it lands
+      g.fillStyle = '#a29e97'; g.font = '600 28px ' + FONT; g.fillText(small, 28, 232, 456);
+      tx.needsUpdate = true;
+    }
+    draw(0);
+    const grp = new THREE.Group();
+    const bezel = rbox(1.72, 0.94, 0.08, M.ink, 0.03); bezel.position.y = 1.45; grp.add(bezel);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.8), new THREE.MeshBasicMaterial({ map: tx })); scr.position.set(0, 1.45, 0.045); grp.add(scr);
+    const post = rbox(0.1, 1.0, 0.1, M.ink, 0.03); post.position.set(0, 0.5, -0.03); grp.add(post);
+    const foot = rbox(0.6, 0.06, 0.4, M.ink, 0.02); foot.position.set(0, 0.03, -0.03); grp.add(foot);
+    return { grp, draw };
+  }
+  // Stands the board just past the stop, on the station's side, turned toward the approaching camera
+  function placeKpi(i, board) {
+    const sd = stationCenters[i].side === 'right' ? 1 : -1;
+    const f = frameAt(STOPS[i] + 0.014);
+    board.grp.position.copy(f.p).addScaledVector(f.side, sd * 2.5);
+    const n = f.tan.clone().multiplyScalar(-0.75).addScaledVector(f.side, -sd * 0.65);
+    board.grp.rotation.y = Math.atan2(n.x, n.z);
+    scene.add(board.grp);
+  }
+  const num = (a, b, k, d) => (a + (b - a) * k).toFixed(d || 0);
+
+  // Low-poly tree (green clay crowns on a brown trunk)
+  function tree(seed) {
+    const t = new THREE.Group();
+    const h = 1.2 + (seed % 3) * 0.3;
+    const trunk = cyl(0.11, 0.16, h, M.trunk, 8); trunk.position.y = h / 2; t.add(trunk);
+    const geo = cached('leafIco', () => new THREE.IcosahedronGeometry(1, 1));
+    [[0, h + 0.55, 0, 0.95], [0.5, h + 0.25, 0.15, 0.68], [-0.45, h + 0.32, -0.2, 0.72], [0.05, h + 1.15, 0.05, 0.62]].forEach(([x, y, z, r], i) => {
+      const m = new THREE.Mesh(geo, i % 2 ? M.leaf2 : M.leaf);
+      m.position.set(x, y, z); m.scale.setScalar(r); m.rotation.set(seed + i, seed * 2 + i, 0); m.castShadow = true; t.add(m);
+    });
+    t.rotation.y = seed * 1.7;
+    return t;
+  }
+  function plant(obj, t, offset) {
+    const f = frameAt(t);
+    obj.position.copy(f.p).addScaledVector(f.side, offset);
+    scene.add(obj);
+    return f;
+  }
+  // Brown picnic table with two benches: a place to sit between stations. Long side runs along the route.
+  function picnicTable() {
+    const g = new THREE.Group();
+    for (let i = 0; i < 3; i++) { const s = rbox(2.0, 0.07, 0.26, M.wood, 0.025); s.position.set(0, 0.76, -0.28 + i * 0.28); g.add(s); }
+    [-1, 1].forEach(sd => {
+      for (let i = 0; i < 2; i++) { const s = rbox(2.0, 0.06, 0.15, M.wood, 0.02); s.position.set(0, 0.45, sd * (0.66 + i * 0.16)); g.add(s); }
+      [-0.8, 0.8].forEach(x => { const leg = rbox(0.08, 0.45, 0.08, M.metal, 0.02); leg.position.set(x, 0.225, sd * 0.74); g.add(leg); });
+    });
+    [-0.8, 0.8].forEach(x => { const leg = rbox(0.1, 0.73, 0.1, M.metal, 0.02); leg.position.set(x, 0.37, 0); g.add(leg); });
+    return g;
+  }
+
+  // 1. Miraco: assembly line with test booths (third one in accent)
+  (function () {
+    const g = new THREE.Group();
+    const table = rbox(12, 0.8, 1.6, M.mid, 0.08); table.position.set(0, 0.4, 0); g.add(table);
+    const top = rbox(12.2, 0.1, 1.7, M.light, 0.04); top.position.set(0, 0.85, 0); g.add(top);
+    const units = [];
+    for (let k = 0; k < 5; k++) {
+      const u = new THREE.Group();
+      const bodyU = rbox(1.0, 0.9, 0.8, M.white, 0.1); bodyU.position.y = 0.45; u.add(bodyU);
+      const ring = new THREE.Mesh(cached('fanring', () => new THREE.TorusGeometry(0.28, 0.035, 10, 28)), M.dark); ring.position.set(0, 0.5, 0.41); u.add(ring);
+      const hub = cyl(0.06, 0.06, 0.05, M.dark); hub.rotation.x = Math.PI / 2; hub.position.set(0, 0.5, 0.41); u.add(hub);
+      u.position.set(k * 2.4 - 4.8, 0.9, 0); g.add(u); units.push({ u, k });
+    }
+    let booth3 = null;
+    [-2, 0.5, 3].forEach((x, i) => {
+      const booth = new THREE.Group(); const m = i === 2 ? M.go : M.light;
+      if (i === 2) booth3 = booth; // the third test booth that broke the bottleneck
+      const back = rbox(1.9, 2.2, 0.14, m, 0.05); back.position.set(0, 1.1, -1.0); booth.add(back);
+      const roof = rbox(1.9, 0.14, 2.1, m, 0.05); roof.position.set(0, 2.25, 0); booth.add(roof);
+      [-0.95, 0.95].forEach(sx => [0.95, -0.95].forEach(sz => { const post = rbox(0.12, 2.2, 0.12, m, 0.04); post.position.set(sx, 1.1, sz); booth.add(post); }));
+      booth.position.set(x, 0, 0); g.add(booth);
+    });
+    [-4.2, -0.8, 1.7, 4.4].forEach(x => { const w = figure(workerOpts); w.scale.setScalar(0.85); w.position.set(x, 0, -1.5); g.add(w); });
+    const s = sign('2015  MIRACO', 'Assembly line CDU-1'); s.position.set(-7.6, 0, -1.6); s.rotation.y = 0.5; g.add(s);
+    placeBeside(g, STOPS[0], -5.4);
+    // arrival: the third booth rises and the line runs 26% faster (19 → 24 units an hour)
+    const kpi = kpiBoard('UNITS PER HOUR · LINE CDU-1', k => [num(19, 24, k), k < 1 ? 'was 19' : 'was 19 · +26%']);
+    placeKpi(0, kpi);
+    let lineK = 0, phase = 0;
+    hooks[0] = k => { lineK = k; kpi.draw(k); booth3.scale.y = Math.max(0.001, k); booth3.visible = k > 0.002; };
+    animated.push(dt => { phase += dt * 0.7 * (1 + 0.26 * lineK); units.forEach(o => { o.u.position.x = ((phase + o.k * 2.4) % 12) - 6; }); });
+  })();
+
+  // 2. Elif: five departments and a schedule board
+  (function () {
+    const g = new THREE.Group();
+    const spinners = [], waiting = [];
+    const dept = [
+      () => { const d = new THREE.Group(); const base = rbox(1.8, 0.8, 1.8, M.mid); base.position.y = 0.4; d.add(base); const tower = cyl(0.55, 0.62, 4.0, M.white, 28); tower.position.y = 2.8; d.add(tower); return d; },
+      () => { const d = new THREE.Group(); const b = rbox(2.2, 1.4, 1.6, M.light); b.position.y = 0.7; d.add(b); for (let i = 0; i < 3; i++) { const r = cyl(0.24, 0.24, 1.7, M.white); r.rotation.x = Math.PI / 2; r.position.set(-0.7 + i * 0.7, 1.6, 0); d.add(r); } return d; },
+      () => { const d = new THREE.Group(); const b = rbox(2, 1.1, 1.6, M.mid); b.position.y = 0.55; d.add(b); [0.45, -0.45].forEach(x => { const r = cyl(0.34, 0.34, 1.7, M.white); r.rotation.x = Math.PI / 2; r.position.set(x, 1.45, 0); d.add(r); }); return d; },
+      () => { const d = new THREE.Group(); const b = rbox(2.2, 1.0, 1.4, M.light); b.position.y = 0.5; d.add(b); const hood = rbox(1.2, 0.5, 1.0, M.white); hood.position.y = 1.25; d.add(hood); return d; },
+      () => { const d = new THREE.Group(); const b = rbox(1.8, 0.9, 1.4, M.mid); b.position.y = 0.45; d.add(b); for (let i = 0; i < 4; i++) { const disc = cyl(0.3, 0.3, 0.08, M.white); disc.rotation.z = Math.PI / 2; disc.position.set(-0.6 + i * 0.4, 1.18, 0); d.add(disc); spinners.push(disc); } return d; }
+    ];
+    dept.forEach((make, i) => {
+      const d = make(); d.position.set(-6 + i * 3, 0, 0); g.add(d);
+      const pallet = rbox(1.2, 0.16, 1.0, M.dark, 0.04); pallet.position.set(-6 + i * 3 + 1.4, 0.08, 1.7); g.add(pallet);
+      const roll = cyl(0.42, 0.42, 0.9, M.white); roll.rotation.z = Math.PI / 2; roll.position.set(-6 + i * 3 + 1.4, 0.58, 1.7); g.add(roll);
+      const core = cyl(0.12, 0.12, 0.92, M.dark); core.rotation.z = Math.PI / 2; core.position.copy(roll.position); g.add(core);
+      // extra rolls waiting between departments (the 4–7 day queues); they clear on arrival
+      [[1.4, 1.42, 1.7], [1.4, 0.5, 2.55]].forEach(([dx, y, z]) => {
+        const w = new THREE.Group();
+        const r = cyl(0.42, 0.42, 0.9, M.wait); r.rotation.z = Math.PI / 2; w.add(r);
+        const cr = cyl(0.12, 0.12, 0.92, M.dark); cr.rotation.z = Math.PI / 2; w.add(cr);
+        w.position.set(-6 + i * 3 + dx, y, z); g.add(w); waiting.push(w);
+      });
+    });
+    const tx = textTexture((c, w, h) => {
+      c.fillStyle = '#f4f3f0'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#2f343b'; c.font = '700 34px ' + FONT; c.fillText('SCHEDULE · 26 MACHINES', 26, 50);
+      for (let r = 0; r < 5; r++) {
+        c.fillStyle = '#e6e4df'; c.fillRect(26, 80 + r * 52, w - 52, 40);
+        let x = 32;
+        for (let k = 0; k < 4; k++) { const len = 60 + ((r * 37 + k * 53) % 90); c.fillStyle = (r === 2 && k === 1) ? '#c9962a' : (k % 2 ? '#a29e97' : '#cfccc6'); c.fillRect(x, 86 + r * 52, len, 28); x += len + 14; }
+      }
+    }, 640, 360);
+    const boardBack = rbox(4.7, 2.8, 0.14, M.white, 0.06); boardBack.position.set(0, 2.4, -2.3); g.add(boardBack);
+    const board = texPlane(tx, 4.4, 2.5); board.position.set(0, 2.4, -2.22); g.add(board);
+    [-2.1, 2.1].forEach(x => { const leg = rbox(0.12, 1.1, 0.12, M.mid, 0.04); leg.position.set(x, 0.55, -2.3); g.add(leg); });
+    const s = sign('2018  ELIF', 'Flexible packaging · 5 departments'); s.position.set(-8.2, 0, -1.4); s.rotation.y = 0.5; g.add(s);
+    placeBeside(g, STOPS[1], 6.4);
+    const kpi = kpiBoard('ON-TIME DELIVERY · CUSTOMER DATE', k => [num(89, 95, k) + '%', 'was 89% · waiting 4–7 → 1–3 days']);
+    placeKpi(1, kpi);
+    hooks[1] = k => { kpi.draw(k); waiting.forEach((w, j) => { const s = Math.min(1, Math.max(0, 1 - (k * 1.6 - (j % 2) * 0.3))); w.scale.setScalar(Math.max(0.001, s)); w.visible = s > 0.002; }); };
+    animated.push(dt => spinners.forEach(r => { r.rotation.x += dt * 2.2; }));
+  })();
+
+  // 3. YES PAC 2021: the planning desk that fills up as you arrive
+  const fillers = [];
+  (function () {
+    const g = new THREE.Group();
+    const floor = rbox(9, 0.14, 6.2, M.light, 0.06); floor.position.y = 0.07; g.add(floor);
+    const desk = rbox(3, 0.1, 1.4, M.white, 0.04); desk.position.set(0, 1.0, 0.3); g.add(desk);
+    [[-1.4, -0.3], [1.4, -0.3], [-1.4, 0.9], [1.4, 0.9]].forEach(([x, z]) => { const l = rbox(0.08, 0.95, 0.08, M.mid, 0.03); l.position.set(x, 0.5, z); g.add(l); });
+    const seat = rbox(0.62, 0.1, 0.6, M.mid, 0.04); seat.position.set(0, 0.58, 1.55); g.add(seat);
+    const backrest = rbox(0.62, 0.7, 0.08, M.mid, 0.04); backrest.position.set(0, 0.95, 1.86); g.add(backrest);
+    const stem = cyl(0.04, 0.04, 0.5, M.dark); stem.position.set(0, 0.3, 1.55); g.add(stem);
+    const scr = textTexture((c, w, h) => {
+      c.fillStyle = '#2f343b'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#c9962a'; c.font = '700 40px ' + FONT; c.fillText('MRP', 20, 52);
+      c.fillStyle = '#cfccc6'; c.font = '600 22px ' + FONT; c.fillText('forecast → plan → orders', 20, 88);
+      for (let i = 0; i < 6; i++) { c.fillStyle = i % 2 ? '#a29e97' : '#e6e4df'; c.fillRect(20, 110 + i * 22, 60 + i * 34, 14); }
+    }, 400, 250);
+    const monitor = new THREE.Group();
+    const bezel = rbox(1.6, 1.02, 0.07, M.ink, 0.03); bezel.position.set(0, 1.62, 0); monitor.add(bezel);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.48, 0.92), new THREE.MeshBasicMaterial({ map: scr })); screen.position.set(0, 1.62, 0.04); monitor.add(screen);
+    const stand = rbox(0.1, 0.5, 0.1, M.ink, 0.03); stand.position.set(0, 1.27, -0.05); monitor.add(stand);
+    g.add(monitor); fillers.push(monitor);
+    const wb = textTexture((c, w, h) => {
+      c.fillStyle = '#f4f3f0'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#2f343b'; c.font = '700 30px ' + FONT; c.fillText('ONE PLAN, ONE SOURCE OF TRUTH', 20, 60);
+      ['SALES', 'PLAN', 'MRP', 'PO', 'LINE'].forEach((s, i) => {
+        c.fillStyle = i === 2 ? '#c9962a' : '#e6e4df'; c.fillRect(20 + i * 120, 120, 100, 70);
+        c.fillStyle = '#2f343b'; c.font = '700 26px ' + FONT; c.fillText(s, 30 + i * 120, 165);
+        if (i < 4) c.fillRect(122 + i * 120, 152, 16, 6);
+      });
+    }, 640, 260);
+    const board = new THREE.Group();
+    const bback = rbox(4.3, 1.85, 0.12, M.white, 0.05); bback.position.set(0, 2.4, -2.55); board.add(bback);
+    const face = texPlane(wb, 4.0, 1.6); face.position.set(0, 2.4, -2.48); board.add(face);
+    g.add(board); fillers.push(board);
+    [-3.4, 3.4].forEach(x => {
+      const shelf = new THREE.Group();
+      for (let lv = 0; lv < 3; lv++) {
+        const pl = rbox(1.6, 0.08, 1, M.mid, 0.03); pl.position.set(0, 0.5 + lv * 0.8, 0); shelf.add(pl);
+        for (let b = 0; b < 3; b++) { const bin = rbox(0.42, 0.4, 0.7, (lv === 1 && b === 1) ? M.accent : M.bin, 0.06); bin.position.set(-0.5 + b * 0.5, 0.75 + lv * 0.8, 0); shelf.add(bin); }
+      }
+      [-0.78, 0.78].forEach(px => { const up = rbox(0.06, 2.4, 0.06, M.mid, 0.02); up.position.set(px, 1.2, 0.45); shelf.add(up); });
+      shelf.position.set(x, 0, -1.2); g.add(shelf); fillers.push(shelf);
+    });
+    fillers.forEach(f => { f.scale.setScalar(0.001); f.visible = false; });
+    const s = sign('2021  YES PAC', 'Planning, built from zero'); s.position.set(-6.2, 0, -2.2); s.rotation.y = 0.45; g.add(s);
+    placeBeside(g, STOPS[2], -5.8);
+    // arrival: the empty room fills (desk, MRP, the one-plan board) and local lead time drops 18 → 14.5 days
+    const kpi = kpiBoard('LOCAL SUPPLIER LEAD TIME', k => [num(18, 14.5, k, 1), 'days · was 18 · MRP from zero']);
+    placeKpi(2, kpi);
+    hooks[2] = k => {
+      kpi.draw(k);
+      fillers.forEach((o, i) => { const s = Math.min(1, Math.max(0, k * 1.4 - i * 0.12)); o.visible = s > 0.002; if (o.visible) o.scale.setScalar(s); });
+    };
+  })();
+
+  // 4. Systems and the floor: SAP screens, and Transit carrying pallets up to the warehouse level
+  (function () {
+    const g = new THREE.Group();
+    const sap = screenTex((c, w, h) => {
+      c.fillStyle = '#2f343b'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#ffffff'; c.font = '700 64px ' + FONT; c.fillText('SAP', 24, 80);
+      c.fillStyle = '#c9962a'; c.font = '600 30px ' + FONT; c.fillText('PP · MM · SD · WM', 24, 130);
+      c.fillStyle = '#cfccc6'; c.font = '600 24px ' + FONT; c.fillText('Live Nov 2023', 24, 180);
+      for (let i = 0; i < 4; i++) { c.fillStyle = '#a29e97'; c.fillRect(24, 205 + i * 20, 120 + i * 60, 10); }
+    });
+    const mon = screenOnStand(sap, 2.0, 1.2, 1.9); mon.position.set(-4.6, 0, 0.6); mon.rotation.y = 0.35; g.add(mon);
+    // warehouse level
+    const deck = rbox(5.2, 0.2, 3.2, M.light, 0.06); deck.position.set(2.4, 1.9, -0.6); g.add(deck);
+    [[0, -2.1], [4.8, -2.1], [0, 0.9], [4.8, 0.9]].forEach(([x, z]) => { const col = rbox(0.18, 1.9, 0.18, M.mid, 0.05); col.position.set(x, 0.95, z); g.add(col); });
+    const rail = rbox(5.2, 0.5, 0.06, M.white, 0.02); rail.position.set(2.4, 2.25, 0.98); g.add(rail);
+    for (let i = 0; i < 4; i++) { const stack = rbox(0.9, 0.7, 0.8, i === 2 ? M.accent : M.white, 0.08); stack.position.set(0.9 + i * 1.1, 2.35, -1.3); g.add(stack); }
+    // ramp from the production floor up to the deck
+    const ramp = rbox(4.2, 0.14, 1.1, M.mid, 0.04);
+    const rampStart = new THREE.Vector3(-3.4, 0.08, 0.2), rampEnd = new THREE.Vector3(0.2, 1.95, 0.2);
+    ramp.position.copy(rampStart).lerp(rampEnd, 0.5);
+    ramp.rotation.z = Math.atan2(rampEnd.y - rampStart.y, rampEnd.x - rampStart.x);
+    ramp.scale.x = rampStart.distanceTo(rampEnd) / 4.2; g.add(ramp);
+    const pallets = [];
+    for (let k = 0; k < 4; k++) {
+      const pl = new THREE.Group();
+      const base = rbox(0.7, 0.1, 0.7, M.dark, 0.03); base.position.y = 0.05; pl.add(base);
+      const box = rbox(0.6, 0.45, 0.6, M.white, 0.06); box.position.y = 0.33; pl.add(box);
+      g.add(pl); pallets.push({ pl, k });
+    }
+    const path = [new THREE.Vector3(-5.6, 0.12, 0.2), rampStart.clone().setY(0.16), rampEnd.clone().setY(2.02), new THREE.Vector3(3.6, 2.02, 0.2)];
+    const segs = [path[0].distanceTo(path[1]), path[1].distanceTo(path[2]), path[2].distanceTo(path[3])];
+    const total = segs[0] + segs[1] + segs[2];
+    function along(u) {
+      let d = u * total;
+      for (let i = 0; i < 3; i++) { if (d <= segs[i] || i === 2) return path[i].clone().lerp(path[i + 1], Math.min(1, d / segs[i])); d -= segs[i]; }
+    }
+    [-5, -3.6, 2.2, 3.8].forEach((x, i) => { const w = figure(workerOpts); w.scale.setScalar(0.85); w.position.set(x, i > 1 ? 2.0 : 0, i > 1 ? -0.4 : -1.4); g.add(w); });
+    const s = sign('2022  SYSTEMS', 'SAP and the Transit floor'); s.position.set(-8.2, 0, -1.4); s.rotation.y = 0.5; g.add(s);
+    // seven newcomers: Transit grew from 12 to 19 people
+    const newcomers = [[0.8, 2.0, 0.5], [2.9, 2.0, 0.5], [4.6, 2.0, 0.4], [-6.2, 0, -0.4], [-4.3, 0, -2.2], [-2.6, 0, -1.6], [-1.2, 0, -1.8]].map(([x, y, z], j) => {
+      const w = figure(Object.assign({}, workerOpts, { suit: M.hiVis })); w.position.set(x, y, z); w.rotation.y = j % 2 ? 0.4 : -0.3; w.visible = false; g.add(w); return w;
+    });
+    placeBeside(g, STOPS[3], 6.6);
+    const kpi = kpiBoard('STOCK COUNT ACCURACY · TRANSIT', k => [num(70, 96, k) + '%', 'was 70% · team 12 → 19']);
+    placeKpi(3, kpi);
+    hooks[3] = k => {
+      kpi.draw(k);
+      newcomers.forEach((w, j) => { const s = Math.min(1, Math.max(0, k * 8 - j)); w.visible = s > 0.002; if (w.visible) w.scale.setScalar(0.85 * s); });
+    };
+    pallets.forEach(o => o.pl.position.copy(along(o.k / 4)));
+    animated.push(() => { const tt = performance.now() / 1000; pallets.forEach(o => { const u = ((tt * 0.08) + o.k / 4) % 1; o.pl.position.copy(along(u)); o.pl.scale.setScalar(Math.min(1, u / 0.06, (1 - u) / 0.06) || 0.001); }); });
+  })();
+
+  // 5. The storm: dark clouds and rain, the line keeps running under the roof beside a stack of safety stock
+  (function () {
+    const g = new THREE.Group();
+    const roof = rbox(7, 0.2, 4.2, M.white, 0.06); roof.position.set(0, 3.2, -0.4); g.add(roof);
+    [[-3.3, -2.3], [3.3, -2.3], [-3.3, 1.5], [3.3, 1.5]].forEach(([x, z]) => { const p = rbox(0.18, 3.2, 0.18, M.mid, 0.05); p.position.set(x, 1.6, z); g.add(p); });
+    const machine = rbox(2.6, 1.3, 1.6, M.light, 0.1); machine.position.set(-1.2, 0.65, -0.6); g.add(machine);
+    const hopper = cyl(0.45, 0.2, 0.7, M.white); hopper.position.set(-1.2, 1.65, -0.6); g.add(hopper);
+    const light = ball(0.12, M.accent); light.position.set(-0.1, 1.45, 0.25); g.add(light);
+    for (let lv = 0; lv < 3; lv++) for (let k = 0; k < 3 - (lv > 1 ? 1 : 0); k++) {
+      const b = rbox(0.7, 0.6, 0.7, (lv === 0 && k === 1) ? M.accent : M.white, 0.08); b.position.set(1.2 + k * 0.75, 0.3 + lv * 0.62, -0.6); g.add(b);
+    }
+    const w = figure(workerOpts); w.scale.setScalar(0.85); w.position.set(-1.2, 0, 0.6); g.add(w);
+    // clouds
+    const clouds = new THREE.Group();
+    [[-2, 0], [1.2, 0.3], [3.4, -0.2], [-4.2, 0.4]].forEach(([x, z], i) => {
+      const c = new THREE.Group();
+      [[0, 0, 0, 0.9], [0.8, -0.1, 0.1, 0.7], [-0.8, -0.15, 0, 0.65], [0.3, 0.35, -0.1, 0.6]].forEach(([dx, dy, dz, r]) => { const s = ball(r, M.cloud); s.position.set(dx, dy, dz); s.castShadow = false; c.add(s); });
+      c.position.set(x, 6.2 + (i % 2) * 0.4, z - 0.5); clouds.add(c);
+    });
+    g.add(clouds);
+    // rain outside the roof
+    const DROPS = 90;
+    const rain = new THREE.InstancedMesh(cached('drop', () => new THREE.CylinderGeometry(0.015, 0.015, 0.45, 4)), M.cloud, DROPS);
+    const drops = Array.from({ length: DROPS }, (_, i) => {
+      const left = i % 2 === 0;
+      return { x: left ? -6 + Math.random() * 2.4 : 3.8 + Math.random() * 2.4, z: -2.5 + Math.random() * 4.5, y: Math.random() * 6, v: 6 + Math.random() * 3 };
+    });
+    const dm = new THREE.Object3D();
+    function placeDrops() { drops.forEach((d, i) => { dm.position.set(d.x, d.y, d.z); dm.updateMatrix(); rain.setMatrixAt(i, dm.matrix); }); rain.instanceMatrix.needsUpdate = true; }
+    placeDrops(); g.add(rain);
+    const s = sign('2023  THE STORM', 'Currency crisis · 0 stops'); s.position.set(-7.4, 0, -1.6); s.rotation.y = 0.5; g.add(s);
+    // a local supplier's truck pulls up to the safety stock: the switch to local sources
+    const truck = new THREE.Group();
+    const cargo = rbox(1.9, 1.1, 1.05, M.go, 0.08); cargo.position.set(0.35, 0.85, 0); truck.add(cargo);
+    const cab = rbox(0.8, 0.85, 1.0, M.white, 0.1); cab.position.set(-0.98, 0.72, 0); truck.add(cab);
+    const glass = rbox(0.06, 0.32, 0.8, M.ink, 0.02); glass.position.set(-1.39, 0.92, 0); truck.add(glass);
+    [-0.95, 0.75].forEach(x => [-0.5, 0.5].forEach(z => { const wh = cyl(0.22, 0.22, 0.14, M.metal, 16); wh.rotation.x = Math.PI / 2; wh.position.set(x, 0.22, z); truck.add(wh); }));
+    truck.position.set(7.5, 0, 0.7); truck.visible = false; g.add(truck);
+    placeBeside(g, STOPS[4], -6.0);
+    const kpi = kpiBoard('MONTHS WITHOUT A MATERIAL STOP', k => [num(0, 12, k), 'currency crisis · local suppliers']);
+    placeKpi(4, kpi);
+    hooks[4] = k => { kpi.draw(k); truck.visible = k > 0.002; truck.scale.setScalar(Math.max(0.001, Math.min(1, k * 5))); truck.position.x = 7.5 - 2.9 * Math.min(1, k * 1.25); };
+    animated.push(dt => {
+      drops.forEach(d => { d.y -= d.v * dt; if (d.y < 0) d.y = 6; });
+      placeDrops();
+      clouds.children.forEach((c, i) => { c.position.x += Math.sin(performance.now() / 1600 + i) * dt * 0.15; });
+    });
+  })();
+
+  // 6. The table: S&OP with the board
+  (function () {
+    const g = new THREE.Group();
+    const top = cyl(2.3, 2.3, 0.12, M.white, 40); top.scale.z = 0.55; top.position.set(0, 0.92, -0.4); g.add(top);
+    const ped = cyl(0.35, 0.5, 0.86, M.mid); ped.position.set(0, 0.43, -0.4); g.add(ped);
+    const seats = [];
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+      const x = Math.cos(a) * 2.75, z = -0.4 + Math.sin(a) * 1.65;
+      const chair = new THREE.Group();
+      const seat = rbox(0.6, 0.1, 0.6, M.mid, 0.04); seat.position.y = 0.52; chair.add(seat);
+      const back = rbox(0.6, 0.65, 0.08, M.mid, 0.04); back.position.set(0, 0.86, -0.3); chair.add(back);
+      const stem = cyl(0.04, 0.04, 0.48, M.dark); stem.position.y = 0.25; chair.add(stem);
+      chair.position.set(x, 0, z); chair.rotation.y = Math.atan2(-x, -(z + 0.4)); g.add(chair);
+      seats.push(chair);
+    }
+    seats.forEach((ch, i) => {
+      if (i === 3) return; // an empty chair, kept for you
+      const p = sit(figure(i === 1 ? { suit: M.ink, lapel: M.suitDark, tie: M.accent, skin: M.light, hair: M.ink, beard: false } : guestOpts));
+      p.scale.setScalar(0.9);
+      p.position.copy(ch.position).setY(0.1); p.rotation.y = ch.rotation.y; g.add(p);
+    });
+    // the forecast-accuracy line draws itself on arrival (20% → 49%)
+    const chartCanvas = document.createElement('canvas'); chartCanvas.width = 640; chartCanvas.height = 300;
+    const chart = new THREE.CanvasTexture(chartCanvas); chart.encoding = THREE.sRGBEncoding; chart.anisotropy = 4;
+    const pts = [[40, 230], [180, 205], [320, 150], [460, 120], [600, 105]];
+    let chartStep = -1;
+    function drawChart(k) {
+      const stepN = Math.round(k * 40);
+      if (stepN === chartStep) return;
+      chartStep = stepN;
+      const c = chartCanvas.getContext('2d'), w = 640;
+      c.fillStyle = '#f4f3f0'; c.fillRect(0, 0, w, 300);
+      c.fillStyle = '#2f343b'; c.font = '700 30px ' + FONT; c.fillText('FORECAST ACCURACY (BY SIZE)', 24, 46);
+      c.strokeStyle = '#cfccc6'; c.lineWidth = 2; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(24, 90 + i * 50); c.lineTo(w - 24, 90 + i * 50); c.stroke(); }
+      const span = (pts.length - 1) * stepN / 40;
+      c.strokeStyle = '#3f9a6b'; c.lineWidth = 8; c.lineJoin = 'round'; c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) {
+        const u = Math.min(1, Math.max(0, span - (i - 1)));
+        if (u <= 0) break;
+        c.lineTo(pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * u, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * u);
+      }
+      c.stroke();
+      c.fillStyle = '#2f343b'; c.font = '700 28px ' + FONT; c.fillText('20%', 30, 270);
+      if (stepN === 40) c.fillText('49%', w - 100, 90);
+      chart.needsUpdate = true;
+    }
+    drawChart(0);
+    const wall = rbox(5.2, 3.0, 0.16, M.white, 0.06); wall.position.set(0, 1.9, -2.9); g.add(wall);
+    const face = texPlane(chart, 4.6, 2.2); face.position.set(0, 2.05, -2.81); g.add(face);
+    const s = sign('2025  S&OP', 'One plan with the board'); s.position.set(-8.0, 0, -1.4); s.rotation.y = 0.5; g.add(s);
+    placeBeside(g, STOPS[5], 6.4);
+    const kpi = kpiBoard('OTIF · ON TIME, IN FULL', k => [k < 1 ? num(60, 95, k) + '%' : '~95%', 'was 60% · one plan, agreed monthly']);
+    placeKpi(5, kpi);
+    hooks[5] = k => { kpi.draw(k); drawChart(k); };
+  })();
+
+  // 7. The strait: one ship turns away at the closed strait, another arrives on a new route
+  (function () {
+    const g = new THREE.Group();
+    const water = rbox(16, 0.08, 8, M.water, 0.03); water.position.set(0, 0.04, -1.2); g.add(water);
+    const landL = rbox(7, 0.7, 3.2, M.light, 0.3); landL.position.set(-4.6, 0.35, -3.4); g.add(landL);
+    const landR = rbox(7, 0.7, 3.2, M.light, 0.3); landR.position.set(4.6, 0.35, -3.4); g.add(landR);
+    const landB = rbox(16, 0.6, 1.2, M.light, 0.25); landB.position.set(0, 0.3, 2.4); g.add(landB);
+    // closed strait: a red X
+    const x1 = rbox(1.8, 0.22, 0.22, M.wait, 0.08); x1.position.set(0, 1.2, -3.2); x1.rotation.z = Math.PI / 4; g.add(x1);
+    const x2 = rbox(1.8, 0.22, 0.22, M.wait, 0.08); x2.position.set(0, 1.2, -3.2); x2.rotation.z = -Math.PI / 4; g.add(x2);
+    function ship(cargoAccent) {
+      const s = new THREE.Group();
+      const hull = rbox(2.6, 0.45, 0.8, M.ink, 0.15); hull.position.y = 0.3; s.add(hull);
+      const bridge = rbox(0.5, 0.55, 0.6, M.white, 0.06); bridge.position.set(-0.95, 0.8, 0); s.add(bridge);
+      for (let i = 0; i < 4; i++) { const ct = rbox(0.38, 0.3, 0.55, (cargoAccent && i === 1) ? M.accent : M.mid, 0.04); ct.position.set(-0.4 + i * 0.42, 0.68, 0); s.add(ct); }
+      return s;
+    }
+    const blocked = ship(false); blocked.position.set(-1.6, 0, -1.7); blocked.rotation.y = 0.9; g.add(blocked);
+    const arriving = ship(true); g.add(arriving);
+    const s = sign('2026  HORMUZ', 'Strait closed · line kept running'); s.position.set(-8.4, 0, 1.2); s.rotation.y = 0.5; g.add(s);
+    // the new route (US, Russia, local) draws itself across the water on arrival
+    const routeDots = [];
+    for (let i = 0; i < 12; i++) { const d = ball(0.09, M.go, 1, 0.5, 1); d.position.set(7.4 - i * 0.62, 0.12, 1.15 - i * 0.02); d.visible = false; d.castShadow = false; g.add(d); routeDots.push(d); }
+    placeBeside(g, STOPS[6], -7.4);
+    const kpi = kpiBoard('STOCK COVER · POLYMER', k => [num(90, 120, k), 'days · was 90 · 57 / 57 machines ran']);
+    placeKpi(6, kpi);
+    hooks[6] = k => { kpi.draw(k); routeDots.forEach((d, i) => { d.visible = k * 13 > i; }); };
+    animated.push(() => {
+      const tt = performance.now() / 1000;
+      blocked.position.y = Math.sin(tt * 1.4) * 0.03; blocked.rotation.y = 0.9 + Math.sin(tt * 0.4) * 0.08;
+      const u = (tt * 0.05) % 1;
+      arriving.position.set(7 - u * 7, Math.sin(tt * 1.6) * 0.03, 0.6 - u * 0.2); arriving.rotation.y = Math.PI + 0.05;
+      arriving.scale.setScalar(Math.max(0.001, Math.min(1, u / 0.08, (1 - u) / 0.08)));
+    });
+  })();
+
+  // 8. The group: a map table of Egypt and Ghana with three factories linked by gold arcs
+  (function () {
+    const g = new THREE.Group();
+    const table = rbox(8, 0.16, 5, M.white, 0.06); table.position.set(0, 0.95, -0.6); g.add(table);
+    [[-3.7, -2.8], [3.7, -2.8], [-3.7, 1.6], [3.7, 1.6]].forEach(([x, z]) => { const l = rbox(0.14, 0.9, 0.14, M.mid, 0.04); l.position.set(x, 0.45, z); g.add(l); });
+    const mapTx = textTexture((c, w, h) => {
+      c.fillStyle = '#e6e4df'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#cfccc6';
+      c.beginPath(); c.moveTo(620, 40); c.lineTo(900, 40); c.lineTo(900, 300); c.lineTo(760, 330); c.lineTo(640, 250); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(60, 360); c.lineTo(260, 340); c.lineTo(330, 420); c.lineTo(300, 560); c.lineTo(120, 580); c.lineTo(40, 470); c.closePath(); c.fill();
+      c.fillStyle = '#2f343b'; c.font = '700 40px ' + FONT; c.fillText('EGYPT', 690, 110); c.fillText('GHANA', 100, 420);
+      c.fillStyle = '#6b6f75'; c.font = '600 26px ' + FONT; c.fillText('YES PAC · Sprint Pac', 640, 290); c.fillText('YES PAC Ghana', 90, 540);
+    }, 960, 600);
+    const map = texPlane(mapTx, 7.6, 4.6); map.rotation.x = -Math.PI / 2; map.position.set(0, 1.04, -0.6); g.add(map);
+    function factory(x, z, acc) {
+      const f = new THREE.Group();
+      const b = rbox(0.7, 0.35, 0.5, acc ? M.accent : M.white, 0.05); b.position.y = 0.18; f.add(b);
+      const ch = cyl(0.07, 0.07, 0.35, M.mid); ch.position.set(0.22, 0.45, -0.1); f.add(ch);
+      f.position.set(x, 1.05, z); g.add(f); return f;
+    }
+    const e1 = factory(2.4, -1.9), e2 = factory(3.2, -1.4), gh = factory(-2.6, 0.6, true);
+    // flags in their real colors: Egypt beside the two Egyptian plants, Ghana beside the Ghana plant
+    function flag(at, dx, dz, stripes, star) {
+      const tx = textTexture((c, w, h) => {
+        stripes.forEach((col, i) => { c.fillStyle = col; c.fillRect(0, i * h / 3, w, h / 3 + 1); });
+        if (star) { c.fillStyle = '#111111'; c.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 7 : 17; c.lineTo(w / 2 + Math.cos(a) * r, h / 2 + Math.sin(a) * r); } c.closePath(); c.fill(); }
+        else { c.fillStyle = '#c09a3a'; c.beginPath(); c.arc(w / 2, h / 2, 9, 0, Math.PI * 2); c.fill(); }
+      }, 96, 64);
+      const pole = cyl(0.025, 0.025, 0.95, M.metal, 8); pole.position.set(at.position.x + dx, 1.05 + 0.475, at.position.z + dz); g.add(pole);
+      const cloth = new THREE.Mesh(new THREE.PlaneGeometry(0.48, 0.32), new THREE.MeshStandardMaterial({ map: tx, roughness: 0.9, side: THREE.DoubleSide }));
+      cloth.position.set(at.position.x + dx + 0.25, 1.05 + 0.8, at.position.z + dz); g.add(cloth);
+    }
+    flag(e1, -0.55, 0.3, ['#ce1126', '#ffffff', '#111111']);
+    flag(gh, -0.55, 0.3, ['#ce1126', '#fcd116', '#006b3f'], true);
+    function arc(a, b, h) {
+      const p0 = a.position.clone().setY(1.45), p2 = b.position.clone().setY(1.45);
+      const p1 = p0.clone().lerp(p2, 0.5).setY(1.45 + h);
+      const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(p0, p1, p2), 40, 0.035, 8), M.accent);
+      tube.castShadow = true; g.add(tube);
+      return tube;
+    }
+    const arcs = [arc(e1, gh, 1.6), arc(e1, e2, 0.5)];
+    arcs.forEach(t => t.geometry.setDrawRange(0, 0));
+    [[-1.0, 2.3], [1.4, 2.3]].forEach(([x, z]) => { const w = figure(guestOpts); w.scale.setScalar(0.9); w.position.set(x, 0, z); w.rotation.y = Math.PI; g.add(w); });
+    const s = sign('2026  THE GROUP', 'YES PAC · Sprint Pac · Ghana'); s.position.set(-8.0, 0, -1.6); s.rotation.y = 0.5; g.add(s);
+    placeBeside(g, STOPS[7], 6.6);
+    const kpi = kpiBoard('CASH CONVERSION CYCLE · GROUP', k => [num(190, 171, k), 'days · was 190 · Jan–Sep 2026']);
+    placeKpi(7, kpi);
+    // TubeGeometry indices run along the tube, 8 sides × 6 indices per segment
+    hooks[7] = k => { kpi.draw(k); arcs.forEach(t => t.geometry.setDrawRange(0, Math.round(40 * Math.min(1, k * 1.2)) * 48)); };
+  })();
+
+  // 9. The next shift: robot arms at work and a small AI training room
+  (function () {
+    const g = new THREE.Group();
+    const belt = rbox(5, 0.5, 1, M.mid, 0.06); belt.position.set(-2.5, 0.25, 0.4); g.add(belt);
+    const boxes = [];
+    for (let k = 0; k < 3; k++) { const b = rbox(0.5, 0.4, 0.5, k === 1 ? M.accent : M.white, 0.06); b.position.set(-4.5 + k * 1.6, 0.7, 0.4); g.add(b); boxes.push({ b, k }); }
+    const arms = [];
+    [-3.8, -1.4].forEach((x, i) => {
+      const base = cyl(0.35, 0.45, 0.4, M.ink); base.position.set(x, 0.2, -0.6); g.add(base);
+      const turn = new THREE.Group(); turn.position.set(x, 0.4, -0.6); g.add(turn);
+      const seg1 = rbox(0.22, 1.3, 0.22, M.white, 0.08); seg1.position.y = 0.65; turn.add(seg1);
+      const joint = new THREE.Group(); joint.position.y = 1.3; turn.add(joint);
+      joint.add(ball(0.17, M.ink));
+      const seg2 = rbox(0.18, 1.0, 0.18, M.white, 0.07); seg2.position.y = 0.5; joint.add(seg2);
+      const grip = rbox(0.34, 0.12, 0.2, M.accent, 0.04); grip.position.y = 1.02; joint.add(grip);
+      joint.rotation.z = -0.9;
+      arms.push({ turn, joint, i });
+    });
+    const ai = screenTex((c, w, h) => {
+      c.fillStyle = '#2f343b'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#c9962a'; c.font = '800 96px ' + FONT; c.fillText('AI', 30, 110);
+      c.fillStyle = '#ffffff'; c.font = '600 30px ' + FONT; c.fillText('30+ colleagues trained', 30, 170);
+      c.fillStyle = '#cfccc6'; c.font = '600 24px ' + FONT; c.fillText('agents · SAP feeds · follow-ups', 30, 215);
+    });
+    const scr = screenOnStand(ai, 2.4, 1.4, 2.0); scr.position.set(3.0, 0, -1.8); g.add(scr);
+    const trainees = [];
+    for (let r = 0; r < 2; r++) for (let k = 0; k < 3; k++) {
+      const x = 1.9 + k * 1.1, z = -0.2 + r * 1.2;
+      const stool = rbox(0.5, 0.1, 0.5, M.mid, 0.04); stool.position.set(x, 0.5, z); g.add(stool);
+      const leg = cyl(0.04, 0.04, 0.46, M.dark); leg.position.set(x, 0.24, z); g.add(leg);
+      const tm = M.people[(r * 3 + k) % 3];
+      const p = sit(figure(Object.assign({}, guestOpts, { suit: tm, lapel: tm }))); p.scale.setScalar(0.85); p.position.set(x, 0.08, z); p.rotation.y = Math.PI; p.visible = false; g.add(p);
+      trainees.push(p);
+    }
+    const s = sign('2026  NEXT SHIFT', 'AI in the factory'); s.position.set(-7.6, 0, -1.6); s.rotation.y = 0.5; g.add(s);
+    placeBeside(g, STOPS[8], -6.0);
+    const kpi = kpiBoard('COLLEAGUES TRAINED IN AI', k => [k < 1 ? num(0, 30, k) : '30+', 'two rounds of workshops · 2026']);
+    placeKpi(8, kpi);
+    hooks[8] = k => { kpi.draw(k); trainees.forEach((p, j) => { const s = Math.min(1, Math.max(0, k * 7 - j)); p.visible = s > 0.002; if (p.visible) p.scale.setScalar(0.85 * s); }); };
+    animated.push(() => {
+      const tt = performance.now() / 1000;
+      arms.forEach(a => { a.turn.rotation.y = Math.sin(tt * 0.9 + a.i * 1.7) * 0.9; a.joint.rotation.z = -0.9 + Math.sin(tt * 1.3 + a.i) * 0.35; });
+      boxes.forEach(o => { o.b.position.x = -4.8 + ((tt * 0.5 + o.k * 1.6) % 4.6); });
+    });
+  })();
+
+  // End of the line: the order, delivered
+  (function () {
+    const f = frameAt(0.985);
+    const g = new THREE.Group();
+    const plinth = rbox(2.6, 0.3, 2.0, M.white, 0.08); plinth.position.y = 0.15; g.add(plinth);
+    const pallet = rbox(1.3, 0.14, 1.1, M.dark, 0.04); pallet.position.y = 0.37; g.add(pallet);
+    const pkg = rbox(1.0, 0.8, 0.9, M.accent, 0.12); pkg.position.y = 0.84; g.add(pkg);
+    const band = rbox(1.02, 0.1, 0.92, M.white, 0.03); band.position.y = 0.9; g.add(band);
+    const s = sign('DELIVERED', 'Thank you for walking with me'); s.position.set(0, 0, -1.6); g.add(s);
+    g.position.copy(f.p).addScaledVector(f.tan, 3.5);
+    g.rotation.y = Math.atan2(f.tan.x, f.tan.z) + Math.PI;
+    scene.add(g);
+  })();
+
+  // The horizon: the road runs on past the delivered order toward a sunrise over low clay pyramids.
+  // Roots in Egypt, the road still open. It fades in over the last stretch and the sky warms with it.
+  const horizon = [];
+  (function () {
+    const p1 = curve.getPointAt(1), dir = curve.getTangentAt(1).setY(0).normalize();
+    const side = new THREE.Vector3().crossVectors(dir, UP).normalize();
+    const yaw = Math.atan2(dir.x, dir.z);
+    const road = rbox(1.7, 0.16, 70, M.road, 0.03); road.position.copy(p1).addScaledVector(dir, 35).setY(0.08); road.rotation.y = yaw; scene.add(road);
+    [-1, 1].forEach(sd => { const k = rbox(0.2, 0.24, 70, M.light, 0.05); k.position.copy(road.position).addScaledVector(side, sd * 0.97).setY(0.12); k.rotation.y = yaw; scene.add(k); });
+    const far = (mat) => { mat.fog = false; mat.transparent = true; mat.opacity = 0; horizon.push(mat); return mat; };
+    const sunMat = far(new THREE.MeshBasicMaterial({ color: new THREE.Color(0xf3b45c).convertSRGBToLinear() }));
+    const haloMat = far(new THREE.MeshBasicMaterial({ color: new THREE.Color(0xf6cf94).convertSRGBToLinear() })); haloMat.userData.max = 0.35;
+    const halo = new THREE.Mesh(new THREE.CircleGeometry(17, 48), haloMat);
+    const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(9, 48), sunMat);
+    [[halo, -0.2], [sunDisc, 0]].forEach(([m, back]) => { m.position.copy(p1).addScaledVector(dir, 100 - back).addScaledVector(side, 3).setY(9); m.rotation.y = yaw + Math.PI; m.renderOrder = -1; scene.add(m); });
+    const sandMat = far(clayS(0xd9bf96, 0.95, true)), sandShade = far(clayS(0xc9ab80, 0.95, true)); // flat: crisp faces
+    [[-15, 82, 9, 11], [-3, 88, 12, 14], [8, 80, 6, 7.5]].forEach(([lat, dist, r, h], i) => {
+      const pyr = new THREE.Mesh(cached('pyr' + i, () => new THREE.ConeGeometry(r, h, 4)), i === 1 ? sandMat : sandShade);
+      pyr.position.copy(p1).addScaledVector(dir, dist).addScaledVector(side, lat).setY(h / 2);
+      pyr.rotation.y = yaw + Math.PI / 4; scene.add(pyr);
+    });
+  })();
+  const SKY_COL = new THREE.Color(SKY), DAWN_COL = new THREE.Color(0xf2dcc2), skyNow = new THREE.Color();
+
+  // Green trees at both ends of every station, on the station's side of the walkway
+  STOPS.forEach((s, i) => {
+    const sd = stationCenters[i].side === 'right' ? 1 : -1;
+    plant(tree(i * 2 + 1), s - 0.042, sd * 4.0);
+    plant(tree(i * 2 + 2), s + 0.042, sd * 4.2);
+  });
+  // A brown picnic table (a desk with two benches) halfway between stations, with a tree beside it
+  [...STOPS.slice(0, -1).map((s, i) => (s + STOPS[i + 1]) / 2), 0.95].forEach((t, i) => {
+    const sd = i % 2 ? -1 : 1;
+    const table = picnicTable();
+    const f = plant(table, t, sd * 2.9);
+    table.rotation.y = Math.atan2(-f.tan.z, f.tan.x);
+    plant(tree(i + 20), t + 0.008, sd * 5.0);
+  });
+
+  // Pallet props for depth
+  for (let i = 0; i < 30; i++) {
+    const f = frameAt((i + 0.5) / 30);
+    const side = (i % 2 ? 1 : -1) * (13 + (i * 7) % 6);
+    const pallet = new THREE.Group();
+    const base = rbox(1.4, 0.16, 1.2, M.dark, 0.04); base.position.y = 0.08; pallet.add(base);
+    for (let k = 0; k < 1 + (i % 3); k++) { const bx = rbox(1.2, 0.6, 1.0, k % 2 ? M.light : M.white, 0.08); bx.position.y = 0.46 + k * 0.62; pallet.add(bx); }
+    pallet.position.copy(f.p).addScaledVector(f.side, side); pallet.rotation.y = i * 0.7;
+    scene.add(pallet);
+  }
+
+  // Scroll → progress
+  const tOf = c => 0.02 + c * 0.96;
+  const STOP_P = STOPS.map(s => (s - 0.02) / 0.96);
+  let target = 0, current = 0, forced = null, expectedY = null;
+  let still = false; // #sNN preview: show each stop in its arrived state at once
+  const maxScroll = () => Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  function readScroll() {
+    if (forced !== null && expectedY !== null && Math.abs(window.scrollY - expectedY) > 40) forced = null;
+    if (forced !== null) { target = forced; return; }
+    target = Math.min(1, Math.max(0, window.scrollY / maxScroll()));
+  }
+  window.addEventListener('scroll', readScroll, { passive: true });
+
+  // Back / Next: walk to the previous or next stop
+  const END_P = 1;
+  const points = [0, ...STOP_P, END_P];
+  let pending = null, pendingAt = 0;
+  function goTo(p) {
+    forced = null; pending = p; pendingAt = performance.now();
+    window.scrollTo({ top: p * maxScroll(), behavior: reduce ? 'auto' : 'smooth' });
+  }
+  function step(dir) {
+    // while a smooth scroll is still travelling, step from where it is heading
+    const busy = pending !== null && performance.now() - pendingAt < 1500 && Math.abs(target - pending) > 0.004;
+    const here = busy ? pending : target;
+    const list = dir > 0 ? points.filter(p => p > here + 0.004) : points.filter(p => p < here - 0.004);
+    if (!list.length) return;
+    goTo(dir > 0 ? list[0] : list[list.length - 1]);
+  }
+  // the user taking over the scroll cancels any queued destination
+  ['wheel', 'touchstart', 'pointerdown'].forEach(ev => window.addEventListener(ev, e => { if (!(e.target.closest && e.target.closest('.stepper'))) pending = null; }, { passive: true }));
+  window.addEventListener('keydown', e => { if (e.target.closest && e.target.closest('.stepper')) return; if (['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', ' '].includes(e.key)) pending = null; });
+  const prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next');
+  prevBtn.addEventListener('click', () => step(-1));
+  nextBtn.addEventListener('click', () => step(1));
+  window.addEventListener('keydown', e => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (e.target.closest && e.target.closest('input, textarea, select')) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+  });
+
+  // Cards and stop bar
+  const cards = [...document.querySelectorAll('[data-card]')];
+  const bars = [...document.querySelectorAll('.stops i')];
+  let shown = 'intro';
+  cards.forEach(c => c.setAttribute('aria-hidden', c.dataset.card === 'intro' ? 'false' : 'true'));
+  function updateCards(p) {
+    let key;
+    if (p < STOP_P[0] - 0.035) key = 'intro';
+    else if (p > STOP_P[8] + 0.05) key = 'outro';
+    else {
+      let best = 0, dist = 1;
+      STOP_P.forEach((s, i) => { const d = Math.abs(p - s); if (d < dist) { dist = d; best = i; } });
+      key = dist < 0.05 ? String(best) : shown;
+    }
+    if (key !== shown) {
+      shown = key;
+      cards.forEach(c => { const off = c.dataset.card !== key; c.classList.toggle('out', off); c.setAttribute('aria-hidden', off ? 'true' : 'false'); });
+      const sc = stationCenters[+key];
+      document.body.dataset.side = (key !== 'intro' && key !== 'outro' && sc) ? sc.side : 'left';
+      const h = cards.find(c => c.dataset.card === key)?.querySelector('h1, h2');
+      if (h) document.getElementById('live').textContent = h.textContent;
+    }
+    bars.forEach((b, i) => b.classList.toggle('on', p >= STOP_P[i] - 0.03));
+    prevBtn.disabled = target < 0.004;
+    nextBtn.disabled = target > END_P - 0.004;
+  }
+
+  function resize() {
+    const w = window.innerWidth, h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    readScroll();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Copy email (falls back to selecting the text)
+  (function () {
+    const btn = document.getElementById('copy-email'), email = document.getElementById('email'), live = document.getElementById('live');
+    let t;
+    const reset = () => { clearTimeout(t); t = setTimeout(() => { btn.textContent = 'Copy email'; }, 2500); };
+    btn.addEventListener('click', () => {
+      const text = email.textContent.trim();
+      const done = () => { btn.textContent = 'Copied'; live.textContent = 'Email address copied'; reset(); };
+      const select = () => { const r = document.createRange(); r.selectNodeContents(email); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected, copy it now'; live.textContent = 'Email address selected'; reset(); };
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, select); else select(); } catch (e) { select(); }
+    });
+  })();
+
+  // Loop
+  const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), lookV = new THREE.Vector3();
+  let first = true, last = performance.now(), walkPhase = 0, walkAmt = 0, faceW = 0, hurry = false;
+  // Walking pace: he strolls at most WALK_SPEED world units a second, whatever the scroll does,
+  // and slows into each stop. The walk clip covers about NATURAL units a second at normal speed.
+  const ROUTE = curve.getLength() * 0.96, WALK_SPEED = 2.2, NATURAL = 1.2;
+  const arr = STOPS.map(() => 0);
+  const ease = k => k * k * (3 - 2 * k);
+  // a stop's zone runs from just before it to a few steps past it (past the KPI board)
+  const inZone = (s, tt) => tt >= s - 0.006 && tt <= s + 0.02;
+  function frame(now) {
+    const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+    const dp = target - current;
+    // Only a long scroll jump (End key, dragged scrollbar: more than one station away) hurries him along; the
+    // whole route then takes about 12 s and he still walks the last ~12 units in. Next/Back never hurry, even
+    // when pressed several times (a pending stepper destination means the buttons are driving).
+    const distU = Math.abs(dp) * ROUTE;
+    if (distU > 30 && pending === null) hurry = true; else if (distU < 12 || pending !== null) hurry = false;
+    const cap = hurry ? Math.min(45, WALK_SPEED + (distU - 12) * 0.8) : WALK_SPEED;
+    let stepP = reduce ? dp : Math.sign(dp) * Math.min(Math.abs(dp) * Math.min(1, dt * 2.2), cap * dt / ROUTE);
+    if (Math.abs(dp) * ROUTE < 0.03) stepP = dp; // close enough: settle exactly on the stop
+    current += stepP;
+    const speed = dt > 0 ? Math.abs(stepP) * ROUTE / dt : 0;
+    const t = tOf(current);
+    const f = frameAt(t);
+    me.position.copy(f.p).setY(0.16);
+    const moving = speed > 0.2 && !reduce;
+    walkAmt += ((moving ? 1 : 0) - walkAmt) * Math.min(1, dt * 5);
+    walkPhase += dt * 8.5 * walkAmt;
+
+    // Arrived at a stop and standing still: turn to look at the station
+    let ni = 0;
+    STOPS.forEach((s, i) => { if (Math.abs(t - s) < Math.abs(t - STOPS[ni])) ni = i; });
+    const atStop = inZone(STOPS[ni], t) && walkAmt < 0.3;
+    faceW += ((atStop ? 1 : 0) - faceW) * Math.min(1, dt * (reduce || still ? 60 : 2.2));
+    const pathYaw = Math.atan2(f.tan.x, f.tan.z);
+    const sc = stationCenters[ni].pos;
+    let turn = Math.atan2(sc.x - f.p.x, sc.z - f.p.z) - pathYaw;
+    turn = Math.atan2(Math.sin(turn), Math.cos(turn));
+    me.rotation.y = pathYaw + turn * 0.85 * ease(Math.min(1, faceW));
+    // Arrival moments: play once he has stopped at a station; stay done after he walks on; undo if he walks back
+    STOPS.forEach((s, i) => {
+      const goal = t < s - 0.006 ? 0 : (t > s + 0.02 || (inZone(s, t) && walkAmt < 0.35)) ? 1 : arr[i];
+      arr[i] = reduce || still ? goal : arr[i] + Math.max(-dt * 0.8, Math.min(dt * 0.45, goal - arr[i]));
+      if (hooks[i]) hooks[i](ease(arr[i]));
+    });
+
+    if (mixer) {
+      walkAct.setEffectiveWeight(walkAmt); idleAct.setEffectiveWeight(1 - walkAmt);
+      walkAct.timeScale = Math.min(1.9, Math.max(0.7, speed / NATURAL));
+      mixer.update(reduce ? 0 : dt);
+      lookUp.forEach(b => { b.rotation.z += 0.3 * (1 - walkAmt) + 0.1 * walkAmt; });
+    } else pose(stand, walkPhase, walkAmt);
+
+    const back = small ? 8.2 : 7.2, height = small ? 4.9 : 4.2;
+    const follow = tmp.copy(f.p).addScaledVector(f.tan, -back).addScaledVector(f.side, small ? 0.6 : 1.8).setY(height);
+    const intro = Math.max(0, 1 - current / 0.04);
+    const portrait = tmp2.copy(f.p).addScaledVector(f.tan, small ? 2.9 : 2.5).addScaledVector(f.side, small ? 0.7 : 1.1).setY(1.72);
+    follow.lerp(portrait, intro * intro);
+    lookV.copy(f.p).addScaledVector(f.tan, 4 * (1 - intro)).setY(1.2 + intro * 0.35);
+    stationCenters.forEach(sc => { const w = Math.max(0, 1 - Math.abs(t - sc.t) / 0.05); if (w > 0) lookV.lerp(sc.pos, w * 0.6); });
+    if (first) { camPos.copy(follow); camLook.copy(lookV); first = false; }
+    camPos.lerp(follow, Math.min(1, dt * 3)); camLook.lerp(lookV, Math.min(1, dt * 4));
+    camera.position.copy(camPos); camera.lookAt(camLook);
+    fillLight.position.copy(camPos).setY(camPos.y + 2); fillLight.target.position.copy(camLook);
+    sun.position.set(f.p.x + 9, 18, f.p.z + 12); sun.target.position.copy(f.p);
+    // last stretch: the horizon fades in and the sky warms to dawn
+    const dawn = Math.min(1, Math.max(0, (t - 0.93) / 0.045)); // after the last station only
+    horizon.forEach(mat => { mat.opacity = dawn * (mat.userData.max || 1); mat.visible = dawn > 0.002; });
+    skyNow.copy(SKY_COL).lerp(DAWN_COL, dawn); scene.background.copy(skyNow); scene.fog.color.copy(skyNow);
+
+    if (!reduce) animated.forEach(fn => fn(dt));
+    updateCards(current);
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+
+  // Optional start point, e.g. #p50 opens halfway along the walk
+  // (#s50 holds the view still without scrolling, for previews)
+  const m = /^#([ps])(\d{1,3})$/.exec(location.hash);
+  if (m && m[1] === 's') { forced = Math.min(100, +m[2]) / 100; target = current = forced; still = true; }
+  else if (m) {
+    forced = Math.min(100, +m[2]) / 100; target = current = forced;
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    expectedY = forced * maxScroll();
+    requestAnimationFrame(() => { expectedY = forced !== null ? forced * maxScroll() : expectedY; window.scrollTo(0, expectedY); });
+  }
+  readScroll();
+  requestAnimationFrame(frame);
+})();
+</script>
