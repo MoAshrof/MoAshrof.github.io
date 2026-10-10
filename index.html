@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Mohamed El Boghdady, supply chain leader: a career walked upstream, from the assembly line to group planning and procurement.">
+<meta property="og:title" content="Mohamed El Boghdady">
+<meta property="og:description" content="Supply Chain Leader · Planning, Procurement & S&OP. Walk the journey or read the CV.">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Mohamed El Boghdady</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one conveyor line down the page. A sticky order ticket on top tracks the year; routing slips hang off the line; the avatar walks it as you scroll. */
+:root {
+  --bg: #eef1f4;          /* factory floor, cool grey */
+  --paper: #ffffff;       /* routing slip */
+  --ink: #121820;
+  --muted: #5a6573;
+  --rule: #cfd6de;
+  --steel: #23395a;       /* primary: painted steel */
+  --steel-ink: #ffffff;
+  --yellow: #f2b705;      /* safety tape */
+  --yellow-ink: #1a1400;
+  --avatar-edge: transparent;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141b; --paper: #17202a; --ink: #e7ecf2; --muted: #9ba7b5; --rule: #2b3643;
+    --steel: #9cb7e3; --steel-ink: #0e141b; --yellow: #f2b705; --yellow-ink: #1a1400; --avatar-edge: #c9d4e2; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141b; --paper: #17202a; --ink: #e7ecf2; --muted: #9ba7b5; --rule: #2b3643;
+  --steel: #9cb7e3; --steel-ink: #0e141b; --yellow: #f2b705; --yellow-ink: #1a1400; --avatar-edge: #c9d4e2; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+a { color: inherit; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 18px; }
+.mono { font-family: var(--mono); }
+:focus-visible { outline: 3px solid var(--steel); outline-offset: 2px; box-shadow: 0 0 0 5px var(--paper); }
+.delivered :focus-visible { outline-color: var(--bg); box-shadow: none; }
+.years a:focus-visible { outline-offset: -3px; box-shadow: none; }
+
+/* Sticky order ticket */
+.ticket {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.ticket .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; }
+.ticket .who { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; white-space: nowrap; }
+.years { position: relative; display: flex; gap: 4px; font-family: var(--mono); font-size: 11px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.years::-webkit-scrollbar { display: none; }
+.years a { text-decoration: none; padding: 8px 7px; border-radius: 4px; color: var(--muted); white-space: nowrap; }
+.years a.on { background: var(--yellow); color: var(--yellow-ink); font-weight: 600; }
+
+/* Hero */
+.hero { padding-block: 40px 28px; }
+.order-no { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; font-family: var(--mono); font-size: 12px; color: var(--muted); border: 1px dashed var(--rule); border-radius: 8px; padding: 9px 12px; background: var(--paper); }
+.hero h1 { font-family: var(--display); font-stretch: 78%; font-weight: 800; font-size: clamp(38px, 8vw, 64px); line-height: 0.98; letter-spacing: -0.01em; margin: 22px 0 14px; text-wrap: balance; }
+.hero h1 em { font-style: normal; text-decoration: underline 0.16em var(--yellow); text-underline-offset: 0.12em; text-decoration-skip-ink: none; }
+.hero .lede { font-size: 17px; max-width: 58ch; margin: 0 0 22px; color: var(--ink); }
+.hero .role { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--muted); margin: 0 0 24px; }
+.doors { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.door { display: block; text-decoration: none; border-radius: 12px; padding: 14px 16px; font-weight: 600; }
+.door small { display: block; font-weight: 400; font-size: 13px; margin-top: 2px; opacity: 0.75; }
+.door.read { background: var(--paper); border: 1px solid var(--rule); }
+.door.walk { background: var(--steel); color: var(--steel-ink); }
+
+/* Conveyor + slips */
+.journey, .block { scroll-margin-top: 60px; }
+.journey { position: relative; padding: 8px 0 8px 58px; margin-top: 18px; }
+.journey::before { content: ""; position: absolute; left: 30px; top: 0; bottom: 0; width: 5px; border-radius: 3px;
+  background: repeating-linear-gradient(to bottom, var(--yellow) 0 14px, var(--ink) 14px 28px); }
+.walker { position: absolute; left: 10px; top: calc(var(--p, 0) * (100% - 72px)); width: 44px; height: 70px; z-index: 2; }
+.walker svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 1px var(--avatar-edge)) drop-shadow(0 0 1px var(--avatar-edge)); }
+.slip { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 18px 16px; margin-bottom: 22px; scroll-margin-top: 70px; }
+.slip::before { content: ""; position: absolute; left: -35px; top: 22px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper); border: 3px solid var(--ink); }
+.slip.on::before { background: var(--yellow); }
+.slip .meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.stamp { font-weight: 600; letter-spacing: 0.1em; background: var(--yellow); color: var(--yellow-ink); padding: 2px 7px; border-radius: 3px; }
+.slip h2 { font-family: var(--display); font-stretch: 85%; font-weight: 750; font-size: 24px; line-height: 1.1; margin: 12px 0 2px; text-wrap: balance; }
+.slip .where { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+.big { font-family: var(--display); font-stretch: 72%; font-weight: 800; font-size: clamp(40px, 9vw, 52px); line-height: 1; color: var(--steel); font-variant-numeric: tabular-nums; margin: 4px 0 2px; }
+.big-label { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.slip p { margin: 0; max-width: 60ch; }
+.slip ul { margin: 10px 0 0; padding-left: 18px; }
+.slip li { margin: 3px 0; font-size: 15px; }
+.slip.storm { border-color: var(--steel); }
+.slip.strait .big { color: var(--ink); }
+
+.delivered { margin: 8px 0 0 58px; background: var(--ink); color: var(--bg); border-radius: 14px; padding: 22px 20px; }
+.delivered h2 { font-family: var(--display); font-stretch: 85%; font-weight: 800; font-size: 28px; margin: 0 0 6px; }
+.delivered p { margin: 0 0 14px; opacity: 0.85; }
+.contact { display: grid; gap: 8px; }
+.contact .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-family: var(--mono); font-size: 14px; }
+.contact .row span { min-width: 0; overflow-wrap: anywhere; }
+.btn { font: 600 13px/1 var(--body); border-radius: 8px; padding: 9px 12px; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; text-decoration: none; display: inline-block; }
+.btn.solid { background: var(--yellow); color: var(--yellow-ink); border-color: var(--yellow); }
+
+/* Sections after the journey */
+section.block { padding-block: 44px 8px; }
+.block h2.h { font-family: var(--display); font-stretch: 85%; font-weight: 800; font-size: 28px; margin: 0 0 6px; }
+.block .sub { color: var(--muted); margin: 0 0 18px; }
+.wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 620px) { .wall { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; }
+.tile b { display: block; font-family: var(--display); font-stretch: 72%; font-weight: 800; font-size: 30px; line-height: 1.05; color: var(--steel); font-variant-numeric: tabular-nums; }
+.tile span { font-size: 13px; color: var(--muted); }
+.mission { margin: 0 0 18px; padding: 18px 20px; background: var(--steel); color: var(--steel-ink); border-radius: 14px; }
+.mission q { display: block; font-family: var(--display); font-stretch: 85%; font-weight: 750; font-size: clamp(22px, 4.6vw, 28px); line-height: 1.15; quotes: "“" "”"; text-wrap: balance; }
+.mission small { display: block; margin-top: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; opacity: 0.8; }
+.teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+@media (max-width: 520px) { .teams { grid-template-columns: minmax(0, 1fr); } }
+.team { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; }
+.team b { display: block; font-size: 15px; margin-bottom: 8px; }
+.team ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; counter-reset: pr; }
+.team li { counter-increment: pr; font-size: 14px; display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: baseline; }
+.team li::before { content: counter(pr); font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--muted); }
+.teams-h { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 22px 0 0; }
+.principles { display: grid; gap: 10px; }
+.principle { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; }
+.principle i { font-style: normal; font-family: var(--mono); font-weight: 600; font-size: 12px; background: var(--steel); color: var(--steel-ink); border-radius: 6px; text-align: center; padding: 6px 0; }
+.principle b { display: block; }
+.principle span { color: var(--muted); font-size: 14px; }
+
+
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+footer { padding-block: 40px; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+/* Avatar walk */
+.legL, .legR { transform-box: fill-box; transform-origin: 50% 0; }
+.walking .legL { animation: stepA 0.7s ease-in-out infinite; }
+.walking .legR { animation: stepB 0.7s ease-in-out infinite; }
+@keyframes stepA { 0%,100% { transform: rotate(14deg); } 50% { transform: rotate(-14deg); } }
+@keyframes stepB { 0%,100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .walking .legL, .walking .legR { animation: none; } }
+@media (max-width: 460px) {
+  .doors { grid-template-columns: 1fr; }
+  .journey { padding-left: 46px; }
+  .journey::before { left: 22px; }
+  .walker { left: 4px; width: 38px; height: 60px; }
+  .slip::before { left: -31px; }
+  .delivered { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<header class="ticket" aria-label="Career timeline">
+  <div class="wrap">
+    <span class="who">M. EL BOGHDADY</span>
+    <nav class="years" aria-label="Jump to a year">
+      <a href="#s2015" data-for="s2015">2015</a>
+      <a href="#s2018" data-for="s2018">2018</a>
+      <a href="#s2021" data-for="s2021">2021</a>
+      <a href="#s2022" data-for="s2022">2022</a>
+      <a href="#s2023" data-for="s2023">2023</a>
+      <a href="#s2025" data-for="s2025">2025</a>
+      <a href="#s2026" data-for="s2026">2026</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="order-no"><span>ORDER · MEB-2015 → TODAY</span><span>ROUTE · LINE → SCHEDULE → PLAN → SUPPLY → GROUP</span></div>
+    <h1>I started where an order ends, <em>on the line</em>, and walked upstream.</h1>
+    <p class="lede">From an assembly line in Cairo to planning and procurement for a packaging group in Egypt and Ghana. Follow the order back up the chain, one stop at a time.</p>
+    <p class="role">MOHAMED ASHRAF AHMED EL BOGHDADY · GROUP HEAD OF PLANNING &amp; PROCUREMENT · YES PAC GROUP</p>
+    <div class="doors">
+      <a class="door walk" href="#journey">Walk the journey<small>9 stops · about 2 minutes</small></a>
+      <a class="door read" href="cv.pdf" target="_blank" rel="noopener">Read the CV<small>2-page PDF</small></a>
+    </div>
+  </section>
+
+  <div class="journey" id="journey">
+    <div class="walker" aria-hidden="true"><svg id="avatar-svg" viewBox="0 0 40 64">
+      <g class="legL"><rect x="14" y="40" width="5" height="20" rx="2" fill="#1c2733"/><rect x="12" y="58" width="8" height="4" rx="1.5" fill="#0e1318"/></g>
+      <g class="legR"><rect x="21" y="40" width="5" height="20" rx="2" fill="#26323f"/><rect x="20" y="58" width="8" height="4" rx="1.5" fill="#0e1318"/></g>
+      <rect x="10" y="20" width="20" height="23" rx="6" fill="#1f3864"/>
+      <path d="M17 20 L20 27 L23 20 Z" fill="#f4f6f8"/>
+      <rect x="18" y="14" width="4" height="7" fill="#c98f6b"/>
+      <circle cx="20" cy="11" r="8" fill="#d6a07c"/>
+      <path d="M12 10 Q12 2 20 2.5 Q28 2 28 10 Q26 6 20 6.5 Q14 6 12 10 Z" fill="#20160f"/>
+      <path d="M13 12 Q13 19 20 20 Q27 19 27 12 Q25 16 20 16.5 Q15 16 13 12 Z" fill="#2a1d14"/>
+    </svg></div>
+
+    <article class="slip" id="s2015" data-year="s2015">
+      <div class="meta"><span class="stamp">MAKE</span><span>2015 – 2016 · Cairo</span></div>
+      <h2>The line</h2>
+      <p class="where">Industrial Engineer, Miraco Carrier</p>
+      <div class="big">19 → 24</div>
+      <div class="big-label">units per hour on the CDU-1 line (+26%)</div>
+      <p>My first stop was the end of the chain: an air-conditioner assembly line with about 30 workers. I led a team of 4 engineers that timed 27 processes, found the bottleneck at the test stations and rebuilt the flow with 5S, line balancing, a test jig, a third test station and a new conveyor. It was my graduation project, graded Excellent.</p>
+    </article>
+
+    <article class="slip" id="s2018" data-year="s2018">
+      <div class="meta"><span class="stamp">SCHEDULE</span><span>2018 – 2021 · Giza</span></div>
+      <h2>The schedule</h2>
+      <p class="where">Production Planning Engineer, Elif Global (flexible packaging)</p>
+      <div class="big">89% → 95%</div>
+      <div class="big-label">on-time delivery, against the date the customer asked for</div>
+      <p>One step up the chain: 200–300 orders a month across 26 machines and five departments, from extrusion to slitting.</p>
+      <ul>
+        <li>Waiting between departments cut from 4–7 days to 1–3 days.</li>
+        <li>Machines that waited a week for material almost never waited.</li>
+      </ul>
+    </article>
+
+    <article class="slip" id="s2021" data-year="s2021">
+      <div class="meta"><span class="stamp">PLAN</span><span>2021 · 6th of October</span></div>
+      <h2>A plan, from zero</h2>
+      <p class="where">Senior Material Planning Engineer, YES PAC</p>
+      <div class="big">Week 2</div>
+      <div class="big-label">when I took over leading planning, months before the title</div>
+      <p>YES PAC had no planning department and no MRP; materials were ordered on experience. I built the system every department now works from:</p>
+      <ul>
+        <li>Forecasts and orders from Sales feeding one plan.</li>
+        <li>MRP with safety stocks and reorder points.</li>
+        <li>Local supplier lead time cut from 18 to 14.5 days.</li>
+      </ul>
+    </article>
+
+    <article class="slip" id="s2022" data-year="s2022">
+      <div class="meta"><span class="stamp">SYSTEMS</span><span>2021 – 2024 · YES PAC</span></div>
+      <h2>The system and the floor</h2>
+      <p class="where">Planning Supervisor</p>
+      <div class="big">70% → 96%</div>
+      <div class="big-label">stock count accuracy in the Transit area</div>
+      <ul>
+        <li>SAP key user for PP; helped design MM, SD and WM. Live November 2023, now holding 34,000+ bills of materials.</li>
+        <li>Took over Transit, the link between production and warehouse, and grew it from 12 to 19 people. Waiting between departments: 4 hours to 30 minutes.</li>
+        <li>Schedule adherence 96%; raw material availability 93%; excess stock down 12%.</li>
+      </ul>
+    </article>
+
+    <article class="slip storm" id="s2023" data-year="s2023">
+      <div class="meta"><span class="stamp">HOLD THE LINE</span><span>2023 – 2024 · Egypt</span></div>
+      <h2>The storm</h2>
+      <p class="where">Leading planning without a Supply Chain Manager</p>
+      <div class="big">0</div>
+      <div class="big-label">machine stops for lack of material</div>
+      <p>For a year I reported directly to the Chief Development Officer while Egypt went through its currency crisis. We moved to local suppliers, and the safety stocks carried the first month until the new supply was in place.</p>
+    </article>
+
+    <article class="slip" id="s2025" data-year="s2025">
+      <div class="meta"><span class="stamp">ALIGN</span><span>2025 · YES PAC</span></div>
+      <h2>The table</h2>
+      <p class="where">Planning Manager · process owner of S&amp;OP</p>
+      <div class="big">20% → 49%</div>
+      <div class="big-label">forecast accuracy (by size), first year of S&amp;OP</div>
+      <p>A monthly plan agreed with two board members, the COO, CCO, CFO and Supply Chain Director.</p>
+      <ul>
+        <li>OTIF from 60% to ~95% across all customers.</li>
+        <li>A locked 30-day plan lifted machine utilization from 76% to 90%+ as capacity grew to 57 machines.</li>
+        <li>Unplanned mold changes from 74% to 18% above plan; output up 16%.</li>
+      </ul>
+    </article>
+
+    <article class="slip strait" id="s2026" data-year="s2026">
+      <div class="meta"><span class="stamp">BUY</span><span>2026 · Strait of Hormuz</span></div>
+      <h2>The strait</h2>
+      <p class="where">Group Head of Planning &amp; Procurement, first weeks in the role</p>
+      <div class="big">57 / 57</div>
+      <div class="big-label">machines kept running through the closure</div>
+      <p>When the strait closed, 100% of our polymer came through the Gulf. Within 2–3 weeks we had other sources in the US, Russia and the local market, and stock cover went from 90 to 120 days.</p>
+      <ul>
+        <li>~$0.36M saved by renegotiating shipments bought at crisis prices.</li>
+        <li>~600 MT bought at $190 per ton below market (~$0.11M).</li>
+      </ul>
+    </article>
+
+    <article class="slip" data-year="s2026">
+      <div class="meta"><span class="stamp">GROUP</span><span>2026 · Egypt and Ghana</span></div>
+      <h2>Three companies, two countries</h2>
+      <p class="where">YES PAC, Sprint Pac and YES PAC Ghana · team of 12</p>
+      <div class="big">190 → 171</div>
+      <div class="big-label">days in the cash conversion cycle, through better supplier terms</div>
+      <ul>
+        <li>Planning for the new Ghana plant: first forecast, machines sourced and bought, supply chain supervisor hired.</li>
+        <li>Foreign indirect purchases: median lead time from 82 to 40 days.</li>
+        <li>Label supply moved to Sprint Pac: local share from 34% to 93%.</li>
+      </ul>
+    </article>
+
+    <article class="slip" data-year="s2026">
+      <div class="meta"><span class="stamp">NEXT SHIFT</span><span>2026 · AI</span></div>
+      <h2>The next shift</h2>
+      <p class="where">Leading AI adoption in the factory</p>
+      <div class="big">30+</div>
+      <div class="big-label">colleagues trained in two rounds of workshops</div>
+      <p>AI agents and automatic SAP data feeds now handle stock triage, procurement analysis, capex tracking and lead-time KPIs, and show each buyer what needs a follow-up. At least half a day a week of manual reporting is gone.</p>
+    </article>
+  </div>
+
+  <div class="delivered" id="contact">
+    <h2>Delivered.</h2>
+    <p>Open to senior supply chain, planning and procurement roles.</p>
+    <div class="contact">
+      <div class="row"><span id="email">mohamed.elboghdaddy@gmail.com</span><button class="btn solid" type="button" id="copy-email">Copy email</button><span class="sr" role="status" id="copy-status"></span></div>
+      <div class="row"><a class="btn" href="https://www.linkedin.com/in/mohamed-ashraf-124119a1" target="_blank" rel="noopener">LinkedIn profile</a><a class="btn" href="cv.pdf" target="_blank" rel="noopener">Open CV (PDF)</a></div>
+    </div>
+  </div>
+
+  <section class="block" aria-labelledby="numbers-h">
+    <h2 class="h" id="numbers-h">The numbers</h2>
+    <p class="sub">Each one is measured, and each one has a story behind it.</p>
+    <div class="wall">
+      <div class="tile"><b>20% → 49%</b><span>Forecast accuracy (by size), first S&amp;OP year</span></div>
+      <div class="tile"><b>60% → ~95%</b><span>OTIF across all customers</span></div>
+      <div class="tile"><b>~$0.47M</b><span>Polymer savings in the 2026 Hormuz crisis</span></div>
+      <div class="tile"><b>76% → 90%+</b><span>Machine utilization, 57 machines</span></div>
+      <div class="tile"><b>190 → 171</b><span>Days in the cash conversion cycle</span></div>
+      <div class="tile"><b>6</b><span>Team members promoted</span></div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="how-h">
+    <h2 class="h" id="how-h">How I work</h2>
+    <p class="sub">The mission I wrote for my planning and procurement team, and four habits behind the numbers.</p>
+    <div class="mission"><q>Right material, right plan, right supplier, at the right time, driving efficiency and reliability across the IML packaging value chain.</q><small>TEAM MISSION · PLANNING &amp; PROCUREMENT · 2026</small></div>
+    <div class="principles">
+      <div class="principle"><i>01</i><div><b>One plan, one source of truth</b><span>Every production and material decision comes from the same plan, agreed across departments.</span></div></div>
+      <div class="principle"><i>02</i><div><b>Keep the line running</b><span>Safety stocks, second sources and early warnings, so a crisis upstream never reaches the machine.</span></div></div>
+      <div class="principle"><i>03</i><div><b>Measure before you claim</b><span>Baselines first, results second. If it can't be measured, it isn't a result yet.</span></div></div>
+      <div class="principle"><i>04</i><div><b>Automate the follow-up</b><span>People should decide; tools should chase, remind and report.</span></div></div>
+    </div>
+    <p class="teams-h">Each team owns three priorities, in this order</p>
+    <div class="teams">
+      <div class="team"><b>Material Planning</b><ol role="list"><li>Availability</li><li>Stock policy</li><li>Efficiency</li></ol></div>
+      <div class="team"><b>Production Planning</b><ol role="list"><li>A feasible plan</li><li>Schedule adherence</li><li>Efficiency and utilization</li></ol></div>
+      <div class="team"><b>Direct Procurement</b><ol role="list"><li>Supply continuity</li><li>Cost</li><li>Efficiency</li></ol></div>
+      <div class="team"><b>Indirect Procurement</b><ol role="list"><li>Business support</li><li>Spend control</li><li>Efficiency</li></ol></div>
+    </div>
+  </section>
+
+<footer>Mohamed Ashraf Ahmed El Boghdady · Giza, Egypt</footer>
+</main>
+
+<script>
+(function () {
+  // Avatar follows scroll progress through the journey
+  const journey = document.getElementById('journey');
+  function move() {
+    const r = journey.getBoundingClientRect();
+    const mid = window.innerHeight * 0.45;
+    const p = Math.min(1, Math.max(0, (mid - r.top) / Math.max(1, r.height)));
+    journey.style.setProperty('--p', p.toFixed(3));
+  }
+  const avatar = document.getElementById('avatar-svg');
+  let ticking = false, idle;
+  window.addEventListener('scroll', () => {
+    avatar.classList.add('walking');
+    clearTimeout(idle); idle = setTimeout(() => avatar.classList.remove('walking'), 180);
+    if (!ticking) { ticking = true; requestAnimationFrame(() => { move(); ticking = false; }); }
+  }, { passive: true });
+  window.addEventListener('resize', move);
+  move();
+
+  // Highlight the current stop and its year in the ticket
+  const links = [...document.querySelectorAll('.years a')];
+  const slips = [...document.querySelectorAll('.slip')];
+  function mark(slip) {
+    slips.forEach(s => s.classList.toggle('on', s === slip));
+    const year = slip.dataset.year;
+    links.forEach(a => {
+      const hit = a.dataset.for === year;
+      a.classList.toggle('on', hit);
+      if (hit) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
+    const on = links.find(a => a.dataset.for === year);
+    if (on) { const nav = on.parentElement; nav.scrollTo({ left: on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2 }); }
+  }
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) mark(e.target); });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    slips.forEach(s => io.observe(s));
+  }
+
+  // Copy email (falls back to selecting the text)
+  const btn = document.getElementById('copy-email');
+  const email = document.getElementById('email');
+  const status = document.getElementById('copy-status');
+  let resetTimer;
+  const reset = () => { clearTimeout(resetTimer); resetTimer = setTimeout(() => { btn.textContent = 'Copy email'; status.textContent = ''; }, 2500); };
+  btn.addEventListener('click', () => {
+    const text = email.textContent.trim();
+    const done = () => { btn.textContent = 'Copied'; status.textContent = 'Email address copied'; reset(); };
+    const select = () => {
+      const range = document.createRange(); range.selectNodeContents(email);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      btn.textContent = 'Selected, copy it now'; status.textContent = 'Email address selected'; reset();
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, select);
+      else select();
+    } catch (e) { select(); }
+  });
+})();
+</script>
+</body>
+</html>
